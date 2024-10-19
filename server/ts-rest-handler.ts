@@ -1,9 +1,16 @@
-import { fetchRequestHandler, tsr } from "@ts-rest/serverless/fetch";
-import { contract } from "../ts-rest/contract";
+import {
+  fetchRequestHandler,
+  tsr,
+} from "@ts-rest/serverless/fetch";
 // TODO: stop using universal-middleware and directly integrate server middlewares instead. (Bati generates boilerplates that use universal-middleware https://github.com/magne4000/universal-middleware to make Bati's internal logic easier. This is temporary and will be removed soon.)
-import { Get, UniversalHandler } from "@universal-middleware/core";
-import * as drizzleQueries from "../database/drizzle/queries/todos";
+import {
+  Get,
+  UniversalHandler,
+} from "@universal-middleware/core";
+
 import { dbSqlite } from "../database/drizzle/db";
+import * as todoQueries from "../database/drizzle/queries/todos";
+import { contract } from "../ts-rest/contract";
 
 /**
  * ts-rest route
@@ -20,7 +27,7 @@ const router = tsr.platformContext<{ db: ReturnType<typeof dbSqlite> }>().router
     };
   },
   createTodo: async ({ body }, _ctx) => {
-    await drizzleQueries.insertTodo(_ctx.db, body.text);
+    await todoQueries.insertTodo(_ctx.db, body.text);
     return {
       status: 200,
       body: {
