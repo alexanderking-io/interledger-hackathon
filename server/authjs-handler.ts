@@ -1,8 +1,25 @@
-import { Auth, type AuthConfig, createActionURL, setEnvDefaults } from "@auth/core";
+import { getUserByEmail } from "@/database/drizzle/queries/users";
+import {
+  Auth,
+  type AuthConfig,
+  createActionURL,
+  setEnvDefaults,
+} from "@auth/core";
 import CredentialsProvider from "@auth/core/providers/credentials";
-import type { Session } from "@auth/core/types";
+import type {
+  Session,
+  User,
+} from "@auth/core/types";
 // TODO: stop using universal-middleware and directly integrate server middlewares instead. (Bati generates boilerplates that use universal-middleware https://github.com/magne4000/universal-middleware to make Bati's internal logic easier. This is temporary and will be removed soon.)
-import type { Get, UniversalHandler, UniversalMiddleware } from "@universal-middleware/core";
+import type {
+  Get,
+  UniversalHandler,
+  UniversalMiddleware,
+} from "@universal-middleware/core";
+
+import { verifyUser } from "./utils/auth";
+import { db } from "./utils/db";
+import { userValidator } from "./validators/user";
 
 const env: Record<string, string | undefined> =
   typeof process?.env !== "undefined"
@@ -32,17 +49,22 @@ const authjsConfig = {
     CredentialsProvider({
       name: "Credentials",
       credentials: {
-        username: { label: "Username", type: "text", placeholder: "jsmith" },
+        email: { label: "Email", type: "text", placeholder: "" },
         password: { label: "Password", type: "password" },
       },
-      async authorize() {
-        // Add logic here to look up the user from the credentials supplied
-        const user = { id: "1", name: "J Smith", email: "jsmith@example.com" };
+      async authorize(request) {
+        const user = userValidator.safeParse(request);
+        if (!user.success) return null;
 
-        // Any object returned will be saved in `user` property of the JWT
-        // If you return null then an error will be displayed advising the user to check their details.
-        // You can also Reject this callback with an Error thus the user will be sent to the error page with the error message as a query parameter
-        return user ?? null;
+        const result = await verifyUser(user.data.email, user.data.email);
+        if (!result) return null;
+
+        const userFromDB = await getUserByEmail(db, user.data.email);
+        if (!userFromDB.length) return null;
+
+        const userDetails: User = { id: `${userFromDB[0].id}`, email: userFromDB[0].email };
+
+        return userDetails;
       },
     }),
   ],
