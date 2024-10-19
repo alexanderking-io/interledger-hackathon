@@ -95,11 +95,13 @@ export async function completePayment(interact_ref: string) {
     const sendingWalletAddress = await client.walletAddress.get({ url: senderUrl });
     console.log("Sending wallet address", sendingWalletAddress);
 
-    console.log("sending params", sendingWalletAddress.resourceServer, finalizedOutgoingPaymentGrant.access_token.value, sendingWalletAddress, quoteId);
+    // console.log("sending params", sendingWalletAddress.resourceServer, finalizedOutgoingPaymentGrant.access_token.value, sendingWalletAddress, quoteId);
 
     const outgoingPayment = await createOutgoingPayment(client, sendingWalletAddress.resourceServer, finalizedOutgoingPaymentGrant.access_token.value, sendingWalletAddress, quoteId);
 
     console.log("Outgoing payment created", outgoingPayment);
+
+    process.env.INCOMING_PAYMENT_ID = outgoingPayment.receiver;
 
     return outgoingPayment;
 }
@@ -107,7 +109,6 @@ export async function completePayment(interact_ref: string) {
 export async function recurringPayment() {
     let senderUrl = process.env.SENDER_URL!;
     let accessToken = process.env.ACCESS_TOKEN!;
-    let quoteId = process.env.QUOTE_ID!;
     let manageUrl = process.env.MANAGE_URL!;
 
     const client = await createClient(process.env.BASE_WALLET_ADDRESS!, process.env.KEY_ID!, process.env.PRIVATE_KEY!);
@@ -123,10 +124,21 @@ export async function recurringPayment() {
     process.env.MANAGE_URL = newToken.access_token.manage;
 
     const sendingWalletAddress = await client.walletAddress.get({ url: senderUrl });
-    console.log("Sending wallet address", sendingWalletAddress);
+
+    const quoteGrant = await requestGrant(client, sendingWalletAddress.authServer, [
+        { type: "quote", actions: ["create", "read", "read-all"] },
+    ], null);
+
+    if (!('access_token' in quoteGrant)) {
+        throw new Error("Quote grant does not have an access token");
+    }
+
+    const quote = await createQuote(client, sendingWalletAddress.resourceServer, quoteGrant.access_token.value, sendingWalletAddress, process.env.INCOMING_PAYMENT_ID!);
+
+    console.log("New Quote created", quote);
 
     try {
-        const outgoingPayment = await createOutgoingPayment(client, sendingWalletAddress.resourceServer, newToken.access_token.value, sendingWalletAddress, quoteId);
+        const outgoingPayment = await createOutgoingPayment(client, sendingWalletAddress.resourceServer, newToken.access_token.value, sendingWalletAddress, quote.id);
         console.log("Outgoing payment created", outgoingPayment);
     } catch (err) {
         console.log("Error creating outgoing payment", err);

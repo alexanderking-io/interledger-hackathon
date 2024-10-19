@@ -5,8 +5,8 @@ export async function createIncomingPayment(client: AuthenticatedClient, resourc
       { url: resourceServerUrl, accessToken },
       {
         walletAddress: walletAddress.id,
-        incomingAmount: { assetCode, assetScale, value },
-        expiresAt: expiresAt!
+        // incomingAmount: { assetCode, assetScale, value },
+        // expiresAt: expiresAt!
       },
     );
 }

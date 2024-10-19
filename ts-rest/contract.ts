@@ -46,6 +46,15 @@ export const contract = c.router(
       },
       summary: "Complete a payment",
     },
+    recurringPaymentRoute: {
+      method: "GET",
+      path: "/recurring-payment",
+      query: c.type<{}>(),
+      responses: {
+        200: c.type<{ status: string; success: Boolean }>(),
+      },
+      summary: "Recurring payment",
+    }
   },
   {
     pathPrefix: "/api",

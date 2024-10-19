@@ -4,7 +4,7 @@ import { contract } from "../ts-rest/contract";
 import { Get, UniversalHandler } from "@universal-middleware/core";
 import * as drizzleQueries from "../database/drizzle/queries/todos";
 import { dbSqlite } from "../database/drizzle/db";
-import { completePayment, initiatePayment } from "./interledger/main";
+import { completePayment, initiatePayment, recurringPayment } from "./interledger/main";
 
 /**
  * ts-rest route
@@ -68,6 +68,20 @@ const router = tsr.platformContext<{ db: ReturnType<typeof dbSqlite> }>().router
         success: res.failed == false,
       },
     };
+  },
+  recurringPaymentRoute: async () => {
+
+    let res = await recurringPayment();
+
+    return {
+      status: 200,
+      body: {
+        status: "Ok",
+        success: res !== undefined,
+        res: res,
+      },
+    };
+
   },
 });
 
