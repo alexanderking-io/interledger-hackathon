@@ -140,3 +140,7 @@ dist
 # aws-cdk
 .cdk.staging
 cdk.out
+
+# TEMP
+database/migrations
+sqlite.db
