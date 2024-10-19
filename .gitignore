@@ -147,3 +147,4 @@ sqlite.db
 private.key
 # large assets
 assets/videos/
+public/videos/

@@ -1,11 +1,5 @@
-import {
-  generateState,
-  OAuth2RequestError,
-} from "arctic";
-import {
-  parse,
-  serialize,
-} from "cookie";
+import { generateState } from "arctic";
+import { serialize } from "cookie";
 import type {
   Session,
   User,
@@ -18,10 +12,8 @@ import {
 
 import * as drizzleQueries from "@/database/drizzle/queries/lucia-auth";
 import {
-  type DatabaseOAuthAccount,
   type DatabaseUser,
   github,
-  type GitHubUser,
   initializeLucia,
 } from "@/lib/lucia-auth";
 // TODO: stop using universal-middleware and directly integrate server middlewares instead. (Bati generates boilerplates that use universal-middleware https://github.com/magne4000/universal-middleware to make Bati's internal logic easier. This is temporary and will be removed soon.)
@@ -116,14 +108,15 @@ export const luciaAuthCookieMiddleware = (() => (_request, context) => {
  * @link {@see https://lucia-auth.com/guides/email-and-password/basics#register-user}
  */
 export const luciaAuthSignupHandler = (() => async (request, context, _runtime) => {
-  const body = (await request.json()) as { email: string; password: string };
+  const body = (await request.json()) as { email: string; password: string; walletAddress: string };
   const email = body.email ?? "";
   const password = body.password ?? "";
+  const walletAddress = body.walletAddress ?? "";
 
   console.log("userpass", { email, password });
   console.log("body", body);
 
-  const validated = signUpValidator.safeParse({ email, password });
+  const validated = signUpValidator.safeParse({ email, password, walletAddress });
 
   console.log("validated", validated);
 
@@ -149,9 +142,9 @@ export const luciaAuthSignupHandler = (() => async (request, context, _runtime) 
   const userId = generateId(15);
 
   try {
-    await drizzleQueries.signupWithCredentials(context.db, userId, email, passwordHash);
+    await drizzleQueries.signupWithCredentials(context.db, userId, walletAddress, email, passwordHash);
 
-    console
+    console;
     const session = await context.lucia.createSession(userId, {});
 
     return new Response(JSON.stringify({ status: "success" }), {
@@ -283,79 +276,4 @@ export const luciaGithubLoginHandler = (() => async () => {
       }),
     },
   });
-}) satisfies Get<[], UniversalHandler>;
-
-/**
- * Github OAuth validate callback handler
- *
- * @link {@see https://lucia-auth.com/guides/oauth/basics#validate-callback}
- */
-export const luciaGithubCallbackHandler = (() => async (request, context, _runtime) => {
-  const cookies = parse(request.headers.get("cookie") ?? "");
-  const params = new URL(request.url).searchParams;
-  const code = params.get("code");
-  const state = params.get("state");
-  const storedState = cookies.github_oauth_state ?? null;
-
-  if (!code || !state || !storedState || state !== storedState) {
-    return new Response("Unauthorized Request", {
-      status: 401,
-    });
-  }
-
-  try {
-    const tokens = await github.validateAuthorizationCode(code);
-    const githubUserResponse = await fetch("https://api.github.com/user", {
-      headers: {
-        Authorization: `Bearer ${tokens.accessToken}`,
-      },
-    });
-    const githubUser = (await githubUserResponse.json()) as GitHubUser;
-
-    const existingAccount: DatabaseOAuthAccount | undefined | null = (await drizzleQueries.getExistingAccount(
-      context.db,
-      "github",
-      githubUser.id,
-    )) as DatabaseOAuthAccount | undefined;
-
-    if (existingAccount) {
-      const session = await context.lucia.createSession(existingAccount.userId, {});
-      return new Response(null, {
-        status: 302,
-        headers: {
-          Location: "/",
-          "set-cookie": context.lucia.createSessionCookie(session.id).serialize(),
-        },
-      });
-    }
-
-    const userId = generateId(15);
-
-    await drizzleQueries.signupWithGithub(context.db, userId, githubUser.login, githubUser.id);
-
-    const session = await context.lucia.createSession(userId, {});
-
-    return new Response(null, {
-      status: 302,
-      headers: {
-        Location: "/",
-        "set-cookie": context.lucia.createSessionCookie(session.id).serialize(),
-      },
-    });
-  } catch (error) {
-    if (error instanceof OAuth2RequestError && error.message === "bad_verification_code") {
-      return new Response(JSON.stringify({ error: error.message }), {
-        status: 400,
-        headers: {
-          "content-type": "application/json",
-        },
-      });
-    }
-    return new Response(JSON.stringify({ error: error }), {
-      status: 500,
-      headers: {
-        "content-type": "application/json",
-      },
-    });
-  }
 }) satisfies Get<[], UniversalHandler>;

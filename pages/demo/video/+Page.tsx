@@ -1,26 +1,12 @@
 import React from "react";
 
-// import type { Data } from "./+data";
 import VideoJS, {
   Player,
   VideoJSOptions,
 } from "@/components/VideoJS";
 
-function sendPayment() {
-  const xhr = new XMLHttpRequest();
-  xhr.open('GET', 'http://localhost:8080/api/recurring-payment');
-  xhr.onload = function() {
-    if (xhr.status === 200) {
-      var data = JSON.parse(xhr.responseText);
-      console.log(data);
-    }
-  };
-  xhr.send();
-}
-
 export default function Page() {
   const playerRef = React.useRef<Player | null>(null);
-  var previousTime = 0;
 
   const videoJsOptions: VideoJSOptions = {
     autoplay: true,
@@ -52,19 +38,20 @@ export default function Page() {
     });
   };
 
-  setInterval(() => {
-    var currentTime = playerRef.current?.currentTime();
-
-    if (currentTime && currentTime !== previousTime) {
-      sendPayment();
-      previousTime = currentTime;
-    }
-  }, 2000);
-
   return (
-    <div className="w-full">
-      <h1>Hi Video Demo!</h1>
-      <VideoJS options={videoJsOptions} onReady={handlePlayerReady} />
-    </div>
+    <>
+      <div className="grid grid-cols-12">
+        <div></div>
+        <div className="col-span-10">
+          <div className="pt-10">
+            <VideoJS options={videoJsOptions} onReady={handlePlayerReady} />
+          </div>
+          <div className="pt-4">
+            <h1 className="text-2xl">Video Demo!</h1>
+          </div>
+        </div>
+        <div></div>
+      </div>
+    </>
   );
 }
