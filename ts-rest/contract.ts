@@ -27,6 +27,34 @@ export const contract = c.router(
       },
       summary: "Create a Todo",
     },
+    initiatePaymentRoute: {
+      method: "GET",
+      path: "/initiate-payment",
+      query: c.type<{ userWalletUrl: string, amount: string }>(),
+      responses: {
+        200: c.type<{ status: string; res: string }>(),
+      },
+      summary: "Initiate a payment",
+    },
+    completePaymentRoute: {
+      method: "GET",
+      path: "/complete-payment",
+      query: c.type<{ interact_ref?: string }>(),
+      responses: {
+        200: c.type<{ status: string; success: Boolean }>(),
+        400: c.type<{ status: string }>(),
+      },
+      summary: "Complete a payment",
+    },
+    recurringPaymentRoute: {
+      method: "GET",
+      path: "/recurring-payment",
+      query: c.type<{}>(),
+      responses: {
+        200: c.type<{ status: string; success: Boolean }>(),
+      },
+      summary: "Recurring payment",
+    }
   },
   {
     pathPrefix: "/api",

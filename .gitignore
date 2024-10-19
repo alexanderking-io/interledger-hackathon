@@ -141,5 +141,9 @@ dist
 .cdk.staging
 cdk.out
 
+# TEMP
+database/migrations
+sqlite.db
+private.key
 # large assets
 assets/videos/

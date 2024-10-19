@@ -3,6 +3,7 @@ import "video.js/dist/video-js.css";
 import React from "react";
 
 import videojs from "video.js";
+import { set } from "video.js/dist/types/tech/middleware";
 
 export type Player = ReturnType<typeof videojs>;
 type PlayerReadyCallback = (player: Player) => void;
@@ -53,7 +54,7 @@ export const VideoJS = ({ options, onReady }: VideoJSProps) => {
     } else {
       const player = playerRef.current;
 
-      player.autoplay(options.autoplay);
+      player.autoplay(false);
       player.src(options.sources);
     }
   }, [options, videoRef]);

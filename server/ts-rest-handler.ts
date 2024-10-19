@@ -9,6 +9,7 @@ import {
 } from "@universal-middleware/core";
 
 import { dbSqlite } from "../database/drizzle/db";
+import { completePayment, initiatePayment, recurringPayment } from "./interledger/main";
 import * as todoQueries from "../database/drizzle/queries/todos";
 import { contract } from "../ts-rest/contract";
 
@@ -34,6 +35,60 @@ const router = tsr.platformContext<{ db: ReturnType<typeof dbSqlite> }>().router
         status: "Ok",
       },
     };
+  },
+  initiatePaymentRoute: async (req: { query: { userWalletUrl : string, amount : string} }) => {
+    var res = await initiatePayment(req.query.userWalletUrl, req.query.amount);
+
+    return {
+      status: 200,
+      body: {
+        status: "Ok",
+        res: res,
+      },
+    };
+  },
+  completePaymentRoute: async (req: { query: { interact_ref?: string } }) => {
+    
+    if (!('interact_ref' in req.query)) {
+      return {
+        status: 400,
+        body: {
+          status: "Bad Request",
+        },
+      };
+    }
+    var res = await completePayment(req.query.interact_ref!);
+
+    if (!('failed' in res)) {
+      return {
+        status: 400,
+        body: {
+          status: "Bad Request",
+        },
+      };
+    }
+
+    return {
+      status: 200,
+      body: {
+        status: "Ok",
+        success: res.failed == false,
+      },
+    };
+  },
+  recurringPaymentRoute: async () => {
+
+    let res = await recurringPayment();
+
+    return {
+      status: 200,
+      body: {
+        status: "Ok",
+        success: res !== undefined,
+        res: res,
+      },
+    };
+
   },
 });
 

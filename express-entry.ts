@@ -4,6 +4,7 @@ import { dirname } from "node:path";
 import { fileURLToPath } from "node:url";
 
 import express from "express";
+import session from "express-session";
 
 import {
   createHandler,
@@ -53,7 +54,14 @@ async function startServer() {
   }
 
   app.use(createMiddleware(dbMiddleware)());
+  app.use(express.json());
 
+  app.use(session({
+    secret: 'keyboard cat',
+    resave: false,
+    saveUninitialized: true,
+    cookie: { secure: true }
+  }))
   app.use(createMiddleware(luciaDbMiddleware)());
   app.use(createMiddleware(luciaCsrfMiddleware)());
   app.use(createMiddleware(luciaAuthContextMiddleware)());
