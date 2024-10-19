@@ -1,14 +1,30 @@
 import "dotenv/config";
+
 import { dirname } from "node:path";
 import { fileURLToPath } from "node:url";
-import { authjsHandler, authjsSessionMiddleware } from "./server/authjs-handler";
 
-import { vikeHandler } from "./server/vike-handler";
-import { tsRestHandler } from "./server/ts-rest-handler";
-import { createHandler, createMiddleware } from "@universal-middleware/express";
-import { dbMiddleware } from "./server/db-middleware";
 import express from "express";
 import session from "express-session";
+
+import {
+  createHandler,
+  createMiddleware,
+} from "@universal-middleware/express";
+
+import { dbMiddleware } from "./server/db-middleware";
+import {
+  luciaAuthContextMiddleware,
+  luciaAuthCookieMiddleware,
+  luciaAuthLoginHandler,
+  luciaAuthLogoutHandler,
+  luciaAuthSignupHandler,
+  luciaCsrfMiddleware,
+  luciaDbMiddleware,
+  luciaGithubCallbackHandler,
+  luciaGithubLoginHandler,
+} from "./server/lucia-auth-handlers";
+import { tsRestHandler } from "./server/ts-rest-handler";
+import { vikeHandler } from "./server/vike-handler";
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
@@ -38,8 +54,6 @@ async function startServer() {
   }
 
   app.use(createMiddleware(dbMiddleware)());
-
-  app.use(createMiddleware(authjsSessionMiddleware)());
   app.use(express.json());
 
   app.use(session({
@@ -48,12 +62,16 @@ async function startServer() {
     saveUninitialized: true,
     cookie: { secure: true }
   }))
+  app.use(createMiddleware(luciaDbMiddleware)());
+  app.use(createMiddleware(luciaCsrfMiddleware)());
+  app.use(createMiddleware(luciaAuthContextMiddleware)());
+  app.use(createMiddleware(luciaAuthCookieMiddleware)());
 
-  /**
-   * Auth.js route
-   * @link {@see https://authjs.dev/getting-started/installation}
-   **/
-  app.all("/api/auth/*", createHandler(authjsHandler)());
+  app.post("/api/signup", createHandler(luciaAuthSignupHandler)());
+  app.post("/api/login", createHandler(luciaAuthLoginHandler)());
+  app.post("/api/logout", createHandler(luciaAuthLogoutHandler)());
+  app.get("/api/login/github", createHandler(luciaGithubLoginHandler)());
+  app.get("/api/login/github/callback", createHandler(luciaGithubCallbackHandler)());
 
   app.all("/api/*", createHandler(tsRestHandler)());
 

@@ -145,3 +145,5 @@ cdk.out
 database/migrations
 sqlite.db
 private.key
+# large assets
+assets/videos/

@@ -19,6 +19,10 @@ body {
   box-sizing: border-box;
 }
 
+#page-container {
+  width: 100%;
+}
+
 /* Page Transition Animation */
 #page-content {
   opacity: 1;
