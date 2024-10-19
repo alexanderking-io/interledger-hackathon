@@ -101,13 +101,10 @@ export async function completePayment(interact_ref: string) {
 
     console.log("Outgoing payment created", outgoingPayment);
 
-    recurringPayment();
-
     return outgoingPayment;
 }
 
 export async function recurringPayment() {
-
     let senderUrl = process.env.SENDER_URL!;
     let accessToken = process.env.ACCESS_TOKEN!;
     let quoteId = process.env.QUOTE_ID!;
@@ -120,43 +117,18 @@ export async function recurringPayment() {
         accessToken: accessToken,
     });
 
+    console.log("Token rotated", newToken);
+
     process.env.ACCESS_TOKEN = newToken.access_token.value;
     process.env.MANAGE_URL = newToken.access_token.manage;
-
-    console.log("Token rotated", newToken);
 
     const sendingWalletAddress = await client.walletAddress.get({ url: senderUrl });
     console.log("Sending wallet address", sendingWalletAddress);
 
-    console.log("Incoming payment id", process.env.INCOMING_PAYMENT_ID);
-
-    const outgoing = await client.outgoingPayment.create({ url: sendingWalletAddress.resourceServer, accessToken: newToken.access_token.value },{
-        walletAddress: sendingWalletAddress.id,
-        incomingPayment: process.env.INCOMING_PAYMENT_ID!,
-        debitAmount: { assetCode: sendingWalletAddress.assetCode, assetScale: sendingWalletAddress.assetScale, value: "100" },
-    });
-
-    console.log("Outgoing payment created", outgoing);
-
-
-
-
     try {
-        console.log("Incoming payment id", process.env.INCOMING_PAYMENT_ID);
-        // const outgoingPayment = await createOutgoingPayment(client, sendingWalletAddress.resourceServer, newToken.access_token.value, sendingWalletAddress, quoteId);
-        // console.log("Outgoing payment created", outgoingPayment);
-
-        const outgoing = await client.outgoingPayment.create({ url: sendingWalletAddress.resourceServer, accessToken: newToken.access_token.value },{
-            walletAddress: sendingWalletAddress.id,
-            incomingPayment: process.env.INCOMING_PAYMENT_ID!,
-            debitAmount: { assetCode: sendingWalletAddress.assetCode, assetScale: sendingWalletAddress.assetScale, value: "100" },
-        });
-    
-        console.log("Outgoing payment created", outgoing);
-    
+        const outgoingPayment = await createOutgoingPayment(client, sendingWalletAddress.resourceServer, newToken.access_token.value, sendingWalletAddress, quoteId);
+        console.log("Outgoing payment created", outgoingPayment);
     } catch (err) {
         console.log("Error creating outgoing payment", err);
     }
-
-    
 }
