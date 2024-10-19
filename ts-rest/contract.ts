@@ -27,15 +27,6 @@ export const contract = c.router(
       },
       summary: "Create a Todo",
     },
-    signUp: {
-      method: "POST",
-      path: "/auth/sign-up",
-      body: c.type<{ email: string; password: string }>(),
-      responses: {
-        200: c.type<{ status: string }>(),
-      },
-      summary: "Sign up",
-    }
   },
   {
     pathPrefix: "/api",

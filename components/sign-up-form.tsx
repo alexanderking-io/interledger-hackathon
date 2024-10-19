@@ -1,3 +1,4 @@
+import { usePageContext } from "vike-react/usePageContext";
 import { navigate } from "vike/client/router";
 
 import { Button } from "@/components/ui/button";
@@ -10,17 +11,15 @@ import {
 } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { client } from "@/ts-rest/client";
 import { useForm } from "@tanstack/react-form";
 
 import { Link } from "./Link";
 
-interface SignUpFormProps {
-  onSubmit: (email: string, password: string) => void;
-}
-
 // TODO: validation & error messages
-export function SignUpForm({ onSubmit }: SignUpFormProps) {
+export function SignUpForm() {
+  const ctx = usePageContext();
+
+  // console.log("ctx", ctx);
 
   const form = useForm({
     defaultValues: {
@@ -29,13 +28,17 @@ export function SignUpForm({ onSubmit }: SignUpFormProps) {
       confirmPassword: "",
     },
     onSubmit: async ({ value }) => {
-      const result = await client.signUp({ body: { email: value.email, password: value.password } });
-
-      if (result.status === 200) {
-        navigate("/");
+      const response = await fetch(`/api/signup`, {
+        method: "POST",
+        body: JSON.stringify({ email: value.email, password: value.password }),
+        headers: { "Content-Type": "application/json" },
+      });
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      const result: Record<string, any> = await response.json();
+      if ("error" in result) {
+        console.error("A validation error has occurred :", result.error);
       } else {
-        // TODO: handle
-        console.error("Failed to sign up");
+        await navigate("/");
       }
     },
   });

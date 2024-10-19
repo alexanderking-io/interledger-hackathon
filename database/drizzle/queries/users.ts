@@ -8,6 +8,8 @@ import { type dbSqlite } from "../db";
 import { usersTable } from "../schema/users";
 
 export function insertUser(db: ReturnType<typeof dbSqlite>, email: string, password: string) {
+    console.log('inserting email', email)
+    console.log('inserting password', email)
   return db.insert(usersTable).values({ email, password });
 }
 

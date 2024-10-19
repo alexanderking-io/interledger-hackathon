@@ -10,9 +10,7 @@ import {
 
 import { dbSqlite } from "../database/drizzle/db";
 import * as todoQueries from "../database/drizzle/queries/todos";
-import * as usersQueries from "../database/drizzle/queries/users";
 import { contract } from "../ts-rest/contract";
-import { saltAndHashPassword } from "./utils/auth";
 
 /**
  * ts-rest route
@@ -30,18 +28,6 @@ const router = tsr.platformContext<{ db: ReturnType<typeof dbSqlite> }>().router
   },
   createTodo: async ({ body }, _ctx) => {
     await todoQueries.insertTodo(_ctx.db, body.text);
-    return {
-      status: 200,
-      body: {
-        status: "Ok",
-      },
-    };
-  },
-  signUp: async ({ body }, _ctx) => {
-    const hashedPassword = await saltAndHashPassword(body.password);
-
-    await usersQueries.insertUser(_ctx.db, body.email, hashedPassword);
-
     return {
       status: 200,
       body: {
