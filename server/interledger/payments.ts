@@ -1,27 +1,29 @@
 import { AuthenticatedClient, WalletAddress } from "@interledger/open-payments";
 
-async function createIncomingPayment(client: AuthenticatedClient, resourceServerUrl: string, accessToken: string, walletAddress: WalletAddress, assetCode: string, assetScale: number, value: string) {
+export async function createIncomingPayment(client: AuthenticatedClient, resourceServerUrl: string, accessToken: string, walletAddress: WalletAddress, assetCode: string, assetScale: number, value: string, expiresAt: string|null = null) {
     return await client.incomingPayment.create(
       { url: resourceServerUrl, accessToken },
       {
         walletAddress: walletAddress.id,
         incomingAmount: { assetCode, assetScale, value },
-      }
+        expiresAt: expiresAt!
+      },
     );
-  }
+}
   
-  async function createQuote(client: AuthenticatedClient, resourceServerUrl: string, accessToken: string, walletAddress: WalletAddress, receiver: string) {
+export async function createQuote(client: AuthenticatedClient, resourceServerUrl: string, accessToken: string, walletAddress: WalletAddress, receiver: string) {
     return await client.quote.create(
       { url: resourceServerUrl, accessToken },
       {
         walletAddress: walletAddress.id,
         receiver,
         method: "ilp",
+        debitAmount: { assetCode: walletAddress.assetCode, assetScale: walletAddress.assetScale, value: process.env.PER_SECOND_RATE_LIMIT! },
       }
     );
-  }
+}
   
-  async function createOutgoingPayment(client: AuthenticatedClient, resourceServerUrl: string, accessToken: string, walletAddress: WalletAddress, quoteId: string) {
+export async function createOutgoingPayment(client: AuthenticatedClient, resourceServerUrl: string, accessToken: string, walletAddress: WalletAddress, quoteId: string) {
     return await client.outgoingPayment.create(
       { url: resourceServerUrl, accessToken },
       {
@@ -29,6 +31,4 @@ async function createIncomingPayment(client: AuthenticatedClient, resourceServer
         quoteId,
       }
     );
-  }
-  
-  module.exports = { createIncomingPayment, createQuote, createOutgoingPayment };  
+}

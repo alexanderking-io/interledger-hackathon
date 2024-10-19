@@ -8,6 +8,7 @@ import { tsRestHandler } from "./server/ts-rest-handler";
 import { createHandler, createMiddleware } from "@universal-middleware/express";
 import { dbMiddleware } from "./server/db-middleware";
 import express from "express";
+import session from "express-session";
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
@@ -39,6 +40,14 @@ async function startServer() {
   app.use(createMiddleware(dbMiddleware)());
 
   app.use(createMiddleware(authjsSessionMiddleware)());
+  app.use(express.json());
+
+  app.use(session({
+    secret: 'keyboard cat',
+    resave: false,
+    saveUninitialized: true,
+    cookie: { secure: true }
+  }))
 
   /**
    * Auth.js route

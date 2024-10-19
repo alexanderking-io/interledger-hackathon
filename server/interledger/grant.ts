@@ -1,6 +1,6 @@
 import { AuthenticatedClient, OpenPaymentsClientError, isFinalizedGrant } from "@interledger/open-payments";
 
-async function requestGrant(client : AuthenticatedClient, authServerUrl : string, access : Array<string>, interact : Object|null) {
+export async function requestGrant(client : AuthenticatedClient, authServerUrl : string, access : Object, interact : Object|null) {
 
     interface LooseObject {
         [key: string]: any
@@ -13,17 +13,19 @@ async function requestGrant(client : AuthenticatedClient, authServerUrl : string
         tokenObject.interact = interact;
     }
 
-    console.log("Requesting grant from", authServerUrl, "with token object", tokenObject);
+    let grantTokenObject = JSON.parse(JSON.stringify(tokenObject));
+
+    console.log("Requesting grant from", authServerUrl, "with token object", JSON.stringify(grantTokenObject));
 
     return await client.grant.request(
         {
             url: authServerUrl
         },
-        tokenObject.zip()
+        grantTokenObject,
     );
 }
 
-async function continueGrant(client: AuthenticatedClient, continueUri: string, accessToken: string, interactRef: string) {
+export async function continueGrant(client: AuthenticatedClient, continueUri: string, accessToken: string, interactRef: string) {
   try {
     const grant = await client.grant.continue(
       {
@@ -47,5 +49,3 @@ async function continueGrant(client: AuthenticatedClient, continueUri: string, a
     throw err;
   }
 }
-
-module.exports = { requestGrant, continueGrant };
