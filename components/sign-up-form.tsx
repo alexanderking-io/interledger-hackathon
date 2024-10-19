@@ -1,5 +1,6 @@
 import { usePageContext } from "vike-react/usePageContext";
 import { navigate } from "vike/client/router";
+import { z } from "zod";
 
 import { Button } from "@/components/ui/button";
 import {
@@ -18,8 +19,6 @@ import { Link } from "./Link";
 // TODO: validation & error messages
 export function SignUpForm() {
   const ctx = usePageContext();
-
-  // console.log("ctx", ctx);
 
   const form = useForm({
     defaultValues: {
@@ -61,6 +60,10 @@ export function SignUpForm() {
             <div className="grid gap-2">
               <form.Field
                 name="email"
+                validators={{
+                  onBlur: ({ value }) =>
+                    z.string().email().safeParse(value).success ? undefined : "Invalid email address",
+                }}
                 children={(field) => (
                   <>
                     <Label htmlFor="email">Email</Label>
@@ -74,6 +77,11 @@ export function SignUpForm() {
                       onBlur={field.handleBlur}
                       onChange={(e) => field.handleChange(e.target.value)}
                     />
+                    {field.state.meta.errors.map((err) => (
+                      <div className="text-sm text-red-500" key={err?.toString()}>
+                        {err}
+                      </div>
+                    ))}
                   </>
                 )}
               />
@@ -81,6 +89,10 @@ export function SignUpForm() {
             <div className="grid gap-2">
               <form.Field
                 name="password"
+                validators={{
+                  onBlur: ({ value }) =>
+                    value.length < 8 ? "Password must have a length at least 8 characters " : undefined,
+                }}
                 children={(field) => (
                   <>
                     <Label htmlFor="password">Password</Label>
@@ -94,6 +106,11 @@ export function SignUpForm() {
                       onBlur={field.handleBlur}
                       onChange={(e) => field.handleChange(e.target.value)}
                     />
+                    {field.state.meta.errors.map((err) => (
+                      <div className="text-sm text-red-500" key={err?.toString()}>
+                        {err}
+                      </div>
+                    ))}
                   </>
                 )}
               />
@@ -101,6 +118,15 @@ export function SignUpForm() {
             <div className="grid gap-2">
               <form.Field
                 name="confirmPassword"
+                validators={{
+                  onChangeListenTo: ["password"],
+                  onChange: ({ value, fieldApi }) => {
+                    if (value !== fieldApi.form.getFieldValue("password")) {
+                      return "Passwords do not match";
+                    }
+                    return undefined;
+                  },
+                }}
                 children={(field) => (
                   <>
                     <Label htmlFor="confirm-password">Confirm Password</Label>
@@ -114,6 +140,11 @@ export function SignUpForm() {
                       onBlur={field.handleBlur}
                       onChange={(e) => field.handleChange(e.target.value)}
                     />
+                    {field.state.meta.errors.map((err) => (
+                      <div className="text-sm text-red-500" key={err?.toString()}>
+                        {err}
+                      </div>
+                    ))}
                   </>
                 )}
               />
