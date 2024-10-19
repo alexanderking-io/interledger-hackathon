@@ -19,7 +19,6 @@ import {
   luciaAuthSignupHandler,
   luciaCsrfMiddleware,
   luciaDbMiddleware,
-  luciaGithubCallbackHandler,
   luciaGithubLoginHandler,
 } from "./server/lucia-auth-handlers";
 import { tsRestHandler } from "./server/ts-rest-handler";
@@ -63,7 +62,6 @@ async function startServer() {
   app.post("/api/login", createHandler(luciaAuthLoginHandler)());
   app.post("/api/logout", createHandler(luciaAuthLogoutHandler)());
   app.get("/api/login/github", createHandler(luciaGithubLoginHandler)());
-  app.get("/api/login/github/callback", createHandler(luciaGithubCallbackHandler)());
 
   app.all("/api/*", createHandler(tsRestHandler)());
 

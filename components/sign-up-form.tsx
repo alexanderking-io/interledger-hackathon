@@ -24,6 +24,7 @@ export function SignUpForm() {
   const form = useForm({
     defaultValues: {
       email: "",
+      walletAddress: "",
       password: "",
       confirmPassword: "",
     },
@@ -68,6 +69,26 @@ export function SignUpForm() {
                       id="email"
                       type="email"
                       placeholder="name@example.com"
+                      required
+                      name={field.name}
+                      value={field.state.value}
+                      onBlur={field.handleBlur}
+                      onChange={(e) => field.handleChange(e.target.value)}
+                    />
+                  </>
+                )}
+              />
+            </div>
+            <div className="grid gap-2">
+              <form.Field
+                name="walletAddress"
+                children={(field) => (
+                  <>
+                    <Label htmlFor="email">Wallet Address</Label>
+                    <Input
+                      id="wallet-address"
+                      type="text"
+                      placeholder="$ilp.wallet.com/abc123456"
                       required
                       name={field.name}
                       value={field.state.value}

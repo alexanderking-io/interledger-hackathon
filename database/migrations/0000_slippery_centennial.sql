@@ -15,10 +15,13 @@ CREATE TABLE `sessions` (
 --> statement-breakpoint
 CREATE TABLE `users` (
 	`id` text PRIMARY KEY NOT NULL,
-	`email` text(255) NOT NULL,
-	`password` text(60) DEFAULT '' NOT NULL
+	`email` text NOT NULL,
+	`wallet_address` text NOT NULL,
+	`password` text
 );
 --> statement-breakpoint
+CREATE UNIQUE INDEX `users_email_unique` ON `users` (`email`);--> statement-breakpoint
+CREATE UNIQUE INDEX `users_wallet_address_unique` ON `users` (`wallet_address`);--> statement-breakpoint
 CREATE TABLE `todos` (
 	`id` integer PRIMARY KEY AUTOINCREMENT NOT NULL,
 	`text` text(50) NOT NULL

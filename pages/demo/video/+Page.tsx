@@ -15,7 +15,7 @@ export default function Page() {
     fluid: true,
     sources: [
       {
-        src: "/assets/videos/some_video.mp4",
+        src: "/videos/some_video.mp4",
         type: "video/mp4",
       },
     ],
