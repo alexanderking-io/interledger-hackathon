@@ -24,12 +24,15 @@ export async function createQuote(client: AuthenticatedClient, resourceServerUrl
     );
 }
   
-export async function createOutgoingPayment(client: AuthenticatedClient, resourceServerUrl: string, accessToken: string, walletAddress: WalletAddress, quoteId: string) {
+export async function createOutgoingPayment(client: AuthenticatedClient, resourceServerUrl: string, accessToken: string, walletAddress: WalletAddress, incomingPayment: string, serviceType: string|null = null) {
+
+    let charge = serviceType === "video" ? process.env.VIDEO_WATCH_CHARGE! : process.env.PER_SECOND_RATE_LIMIT!;
     return await client.outgoingPayment.create(
       { url: resourceServerUrl, accessToken },
       {
         walletAddress: walletAddress.id,
-        quoteId,
+        incomingPayment: incomingPayment,
+        debitAmount: { assetCode: walletAddress.assetCode, assetScale: walletAddress.assetScale, value: charge },
       }
     );
 }

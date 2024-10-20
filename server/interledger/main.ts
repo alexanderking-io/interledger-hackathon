@@ -12,6 +12,9 @@ export async function initiatePayment(senderUrl: string, serviceType: string) {
     const sendingWalletAddress = await getWalletAddress(client, senderUrl);
     const receivingWalletAddress = await getWalletAddress(client, process.env.BASE_WALLET_ADDRESS!);
 
+    console.log("Sending wallet address", sendingWalletAddress);
+    console.log("Receiving wallet address", receivingWalletAddress);
+
     const incomingPaymentGrant = await requestGrant(client, receivingWalletAddress.authServer, [
         { type: "incoming-payment", actions: ["list", "read", "read-all", "complete", "create"], },
     ], null);
@@ -32,23 +35,57 @@ export async function initiatePayment(senderUrl: string, serviceType: string) {
 
     process.env.INCOMING_PAYMENT_ID = incomingPayment.id;
 
-    const quoteGrant = await requestGrant(client, sendingWalletAddress.authServer, [
-        { type: "quote", actions: ["create", "read", "read-all"] },
-    ], null);
+    const quoteGrant = await client.grant.request({
+        url: sendingWalletAddress.authServer,
+    }, {
+        access_token: {
+            access: [
+                {
+                    type: "quote",
+                    actions: ["create", "read", "read-all"],
+                }
+            ],
+        }
+    });
+
+    console.log("Quote grant", quoteGrant);
+
+    // const quoteGrant2 = await requestGrant(client, sendingWalletAddress.authServer, [
+    //     { type: "quote", actions: ["create", "read", "read-all"] },
+    // ], null);
+
+    // console.log("Quote grant 2", quoteGrant2);
 
     if (!('access_token' in quoteGrant)) {
         throw new Error("Quote grant does not have an access token");
     }
 
-    const quote = await createQuote(client, sendingWalletAddress.resourceServer, quoteGrant.access_token.value, sendingWalletAddress, incomingPayment.id, serviceType);
+    // const quote1 = await client.quote.create(
+    //     {
+    //       url: sendingWalletAddress.resourceServer,
+    //       accessToken: quoteGrant.access_token.value,
+    //     },
+    //     {
+    //       method: "ilp",
+    //       walletAddress: sendingWalletAddress.id,
+    //       receiver: incomingPayment.id,
+    //     },
+    //   );
 
-    console.log("Quote created", quote);
+    // console.log("Quote created", quote1);
+    // const quote = await createQuote(client, sendingWalletAddress.resourceServer, quoteGrant.access_token.value, sendingWalletAddress, incomingPayment.id, serviceType);
+
+    // console.log("Quote created", quote);
 
     const outgoingPaymentGrant = await requestGrant(client, sendingWalletAddress.authServer, [
         {
             type: "outgoing-payment",
             actions: ["list", "list-all", "read", "read-all", "create"],
-            limits: { debitAmount: quote.debitAmount, receiveAmount: quote.receiveAmount, interval: "R/2016-08-24T08:00:00Z/P1D"},
+            limits: {
+                receiver: incomingPayment.id,
+                debitAmount: { assetCode: sendingWalletAddress.assetCode, assetScale: sendingWalletAddress.assetScale, value: "100" },
+                interval: "R/2016-08-24T08:00:00Z/PT5S"
+            },
             identifier: sendingWalletAddress.id,
         },
     ], {
@@ -67,7 +104,6 @@ export async function initiatePayment(senderUrl: string, serviceType: string) {
     process.env.SENDER_URL = senderUrl;
     process.env.CONTINUE_URI = outgoingPaymentGrant.continue.uri;
     process.env.CONTINUE_TOKEN = outgoingPaymentGrant.continue.access_token.value;
-    process.env.QUOTE_ID = quote.id;
 
     return outgoingPaymentGrant.interact.redirect;
 }
@@ -76,7 +112,6 @@ export async function completePayment(interact_ref: string) {
     let senderUrl = process.env.SENDER_URL!;
     let continueUri = process.env.CONTINUE_URI!;
     let accessToken = process.env.CONTINUE_TOKEN!;
-    let quoteId = process.env.QUOTE_ID!;
 
     const client = await createClient(process.env.BASE_WALLET_ADDRESS!, process.env.KEY_ID!, process.env.PRIVATE_KEY!);
 
@@ -92,7 +127,20 @@ export async function completePayment(interact_ref: string) {
     const sendingWalletAddress = await client.walletAddress.get({ url: senderUrl });
     console.log("Sending wallet address", sendingWalletAddress);
 
-    const outgoingPayment = await createOutgoingPayment(client, sendingWalletAddress.resourceServer, finalizedOutgoingPaymentGrant.access_token.value, sendingWalletAddress, quoteId);
+    console.log("Incoming payment id", process.env.INCOMING_PAYMENT_ID);
+
+    const outgoingPayment = await client.outgoingPayment.create({
+        url: sendingWalletAddress.resourceServer,
+        accessToken: finalizedOutgoingPaymentGrant.access_token.value,
+    }, {
+        walletAddress: sendingWalletAddress.id,
+        incomingPayment: process.env.INCOMING_PAYMENT_ID!,
+        debitAmount: { assetCode: sendingWalletAddress.assetCode, assetScale: sendingWalletAddress.assetScale, value: "100" },
+    });
+
+    // console.log("Outgoing payment created", outgoing);
+
+    // const outgoingPayment = await createOutgoingPayment(client, sendingWalletAddress.resourceServer, finalizedOutgoingPaymentGrant.access_token.value, sendingWalletAddress, process.env.INCOMING_PAYMENT_ID!);
 
     console.log("Outgoing payment created", outgoingPayment);
 
