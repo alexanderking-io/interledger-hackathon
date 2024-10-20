@@ -53,6 +53,7 @@ export function initializeLucia(db: ReturnType<typeof dbSqlite>) {
     getUserAttributes: (attributes) => {
       return {
         email: attributes.email,
+        walletAddress: attributes.walletAddress,
       };
     },
   });
@@ -82,6 +83,7 @@ declare global {
 export interface DatabaseUser {
   id: string;
   email: string;
+  walletAddress: string;
   password?: string | null;
 }
 

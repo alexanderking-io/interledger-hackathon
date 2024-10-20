@@ -1,4 +1,4 @@
-import { useScreen } from "usehooks-ts";
+import { useWindowSize } from "usehooks-ts";
 import { usePageContext } from "vike-react/usePageContext";
 import { navigate } from "vike/client/router";
 
@@ -8,7 +8,7 @@ import RetroGrid from "@/components/ui/retro-grid";
 import WordPullUp from "@/components/ui/word-pull-up";
 
 export default function Page() {
-  const screen = useScreen();
+  const window = useWindowSize();
   const { user } = usePageContext();
 
   return (
@@ -21,8 +21,8 @@ export default function Page() {
           color="#60A5FA"
           maxOpacity={0.5}
           flickerChance={0.1}
-          height={screen?.height ? screen.height : 800}
-          width={screen?.width ? screen.width - 128 : 800}
+          height={window?.height ? window.height : 800}
+          width={window?.width ? window.width - 16 : 800}
         />
         <div className="flex flex-col justify-center">
           <WordPullUp
