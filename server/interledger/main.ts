@@ -92,8 +92,6 @@ export async function completePayment(interact_ref: string) {
     const sendingWalletAddress = await client.walletAddress.get({ url: senderUrl });
     console.log("Sending wallet address", sendingWalletAddress);
 
-    // console.log("sending params", sendingWalletAddress.resourceServer, finalizedOutgoingPaymentGrant.access_token.value, sendingWalletAddress, quoteId);
-
     const outgoingPayment = await createOutgoingPayment(client, sendingWalletAddress.resourceServer, finalizedOutgoingPaymentGrant.access_token.value, sendingWalletAddress, quoteId);
 
     console.log("Outgoing payment created", outgoingPayment);
@@ -110,16 +108,6 @@ export async function recurringPayment(serviceType: string) {
 
     const client = await createClient(process.env.BASE_WALLET_ADDRESS!, process.env.KEY_ID!, process.env.PRIVATE_KEY!);
 
-    const newToken = await client.token.rotate({
-        url: manageUrl,
-        accessToken: accessToken,
-    });
-
-    console.log("Token rotated", newToken);
-
-    process.env.ACCESS_TOKEN = newToken.access_token.value;
-    process.env.MANAGE_URL = newToken.access_token.manage;
-
     const sendingWalletAddress = await client.walletAddress.get({ url: senderUrl });
 
     const quoteGrant = await requestGrant(client, sendingWalletAddress.authServer, [
@@ -133,6 +121,18 @@ export async function recurringPayment(serviceType: string) {
     const quote = await createQuote(client, sendingWalletAddress.resourceServer, quoteGrant.access_token.value, sendingWalletAddress, process.env.INCOMING_PAYMENT_ID!, serviceType);
 
     console.log("New Quote created", quote);
+
+    const newToken = await client.token.rotate({
+        url: manageUrl,
+        accessToken: accessToken,
+    });
+
+    console.log("Token rotated", JSON.stringify(newToken.access_token.access));
+
+    console.log("Token rotated", newToken);
+
+    // process.env.ACCESS_TOKEN = newToken.access_token.value;
+    // process.env.MANAGE_URL = newToken.access_token.manage;
 
     try {
         const outgoingPayment = await createOutgoingPayment(client, sendingWalletAddress.resourceServer, newToken.access_token.value, sendingWalletAddress, quote.id);
