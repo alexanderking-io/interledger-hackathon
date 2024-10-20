@@ -19,7 +19,7 @@ export const contract = c.router(
     initiatePaymentRoute: {
       method: "GET",
       path: "/initiate-payment",
-      query: c.type<{ serviceType: string }>(),
+      query: c.type<{ walletAddress: string, serviceType: string }>(),
       responses: {
         200: c.type<{ status: string; res: string }>(),
       },

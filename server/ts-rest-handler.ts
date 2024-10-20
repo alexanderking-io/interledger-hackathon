@@ -37,9 +37,8 @@ const router = tsr.platformContext<{ db: ReturnType<typeof dbSqlite>; tigerBeetl
       },
     };
   },
-  initiatePaymentRoute: async (req: { query: { serviceType: string } }) => {
-    let userWalletUrl = "https://ilp.rafiki.money/brandontest";
-    var res = await initiatePayment(userWalletUrl, req.query.serviceType);
+  initiatePaymentRoute: async (req: { query: { walletAddress: string,  serviceType: string } }) => {
+    var res = await initiatePayment(req.query.walletAddress, req.query.serviceType);
 
       return {
         status: 200,

@@ -14,6 +14,7 @@ import VideoJS, {
   Player,
   VideoJSOptions,
 } from "@/components/VideoJS";
+import { usePageContext } from "vike-react/usePageContext";
 
 const images = [
   {
@@ -55,9 +56,9 @@ const images = [
   },
 ];
 
-function startPayment(callback: () => void) {
+function startPayment(walletAddress: string, callback: () => void) {
   const xhr = new XMLHttpRequest();
-  xhr.open("GET", "/api/initiate-payment?serviceType=video");
+  xhr.open("GET", `/api/initiate-payment?serviceType=video,userWallet=${walletAddress}`);
   xhr.onload = function () {
     if (xhr.status === 200) {
       var data = JSON.parse(xhr.responseText);
@@ -85,10 +86,12 @@ function sendPayment() {
         }
       } else {
         reject(`Request failed with status ${xhr.status}`);
+        resolve("failed");
       }
     };
     xhr.onerror = function () {
       reject("Request failed due to a network error.");
+      resolve("failed");
     };
     xhr.send();
   });
@@ -170,8 +173,9 @@ export default function Page() {
   };
 
   useEffect(() => {
+    const { user } = usePageContext();
     // Run startPayment when the component mounts
-    startPayment(() => {
+    startPayment(user.walletAddress, () => {
       videoJsOptions.sources = [
         {
           src: "/videos/some_video.mp4",
