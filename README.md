@@ -14,9 +14,9 @@ Today, most applications charge users a fixed fee regardless of how much they us
 
 ## System Requirements
 
-NodeJs version >= 22.6.0
-Npm version >= 10.8.2
-zsh shell
+* NodeJs version >= 22.6.0
+* Npm version >= 10.8.2
+* zsh shell
 
 ## How to build
 
