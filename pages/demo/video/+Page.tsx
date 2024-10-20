@@ -1,7 +1,12 @@
 import React from "react";
 
-import { Play } from "lucide-react";
+import {
+  Eye,
+  Play,
+  Search,
+} from "lucide-react";
 
+import { Input } from "@/components/ui/input";
 import VideoJS, {
   Player,
   VideoJSOptions,
@@ -74,25 +79,56 @@ export default function Page() {
 
   return (
     <>
-      <div className="grid grid-cols-12">
-        <div></div>
-        <div className="col-span-10">
-          <div className="pt-10 rounded-sm">
-            <VideoJS options={videoJsOptions} onReady={handlePlayerReady} />
+      <div className="grid grid-cols-12 gap-4 pl-8 pt-8 p-4 bg-stone-700 min-h-screen">
+        <div className="col-span-12">
+          <div className="relative">
+            <Input
+              type="text"
+              placeholder="Search"
+              className="w-full bg-stone-800 p-4 rounded-lg h-14 border-stone-800 outline-stone-900"
+            />
+            <Search size={24} className="absolute right-6 top-4 stroke-slate-200" />
           </div>
-          <div className="mt-2 mb-3">
-            <h1 className="text-2xl">Peaceful Boat Ride on a Lake</h1>
+        </div>
+        <div className="col-span-9">
+          <div className="bg-stone-800 rounded-lg p-8 shadow-2xl">
+            <div className="rounded-lg">
+              <VideoJS options={videoJsOptions} onReady={handlePlayerReady} />
+            </div>
+            <div className="mb-8">
+              <div className="flex justify-between">
+                <h1 className="text-2xl my-4 text-slate-50">Peaceful Boat Ride on a Lake</h1>
+                <div className="flex items-center">
+                  <Eye className="stroke-slate-300" size={16} />
+                  <span className="text-orange-400 text-md ml-2">10.2k views</span>
+                </div>
+              </div>
+              <p className="text-sm text-slate-400">
+                Just got back from an amazing boat ride on a stunning lake, and I had to capture it all for you! The
+                weather was perfect, with clear skies and a gentle breeze. The views were unreal—mountains and trees
+                reflecting off the calm water made it feel like we were floating through a painting. I even spotted some
+                wildlife along the way! It was such a peaceful and relaxing day, and I can&apos;t wait to share the
+                footage with you all. Don&apos;t forget to check out the full video for a closer look! 🌊🚤{" "}
+                <span className="text-orange-400 hover:underline cursor-pointer">#BoatRide</span>{" "}
+                <span className="text-orange-400 hover:underline cursor-pointer">#NatureViews</span>{" "}
+                <span className="text-orange-400 hover:underline cursor-pointer">#LakeVibes</span>{" "}
+              </p>
+            </div>
           </div>
-          <div className="grid grid-cols-4 gap-4 mb-8">
+        </div>
+        <div className="bg-stone-800 py-8 flex col-span-3 overflow-y-hidden hover:overflow-y-auto rounded-md">
+          <div className="flex flex-col gap-4 mb-8 h-screen rounded-md px-8">
             {images.map((image, index) => (
-              <div className="relative group hover:cursor-pointer rounded-sm">
-                <img src={image.src} alt={image.title} key={index} className="group-hover:brightness-50" />
-                <Play className="invisible group-hover:visible absolute top-[45%] left-[48%] h-[10%] w-[10%] stroke-slate-300" />
+              <div className="relative group hover:cursor-pointer rounded-md " key={index}>
+                <img src={image.src} alt={image.title} className="group-hover:brightness-50 rounded-md shadow-2xl" />
+                <Play
+                  className="invisible group-hover:visible absolute top-[45%] left-[45%] h-[10%] w-[10%] stroke-slate-300"
+                  size={64}
+                />
               </div>
             ))}
           </div>
         </div>
-        <div></div>
       </div>
     </>
   );
