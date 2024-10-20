@@ -21,5 +21,12 @@ Uzayr Sonday
 
 ## Learnings
 
-We learned how to integrate the open API
+We learned how to integrate the open API and solve the issues presented by the challenge. Integrating different languages using various different frameworks. How to collaborate and code together using GitHub. 
  
+## Achievements
+
+Getting the API to work. Creating an effective solution that has great market value. Working together and not sleeping 
+
+## What comes next?
+
+Fixing a few bugs in the pipeline and getting it ready for production
