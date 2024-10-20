@@ -23,7 +23,7 @@ const items = [
   },
   {
     title: "Video Demo",
-    href: "/video-demo",
+    href: "/demo/video",
     icon: Video,
   },
   {
