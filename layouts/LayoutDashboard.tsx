@@ -2,9 +2,10 @@ import "./style.css";
 import "./tailwind.css";
 
 import {
-  DollarSign,
+  Home,
   Settings,
-  Users2,
+  Video,
+  Wallet,
 } from "lucide-react";
 
 import { Separator } from "@/components/ui/separator";
@@ -13,7 +14,6 @@ import {
   SidebarContent,
   SidebarGroup,
   SidebarGroupContent,
-  SidebarGroupLabel,
   SidebarMenu,
   SidebarMenuButton,
   SidebarMenuItem,
@@ -23,18 +23,23 @@ import {
 
 const items = [
   {
-    title: "Users",
-    url: "#",
-    icon: Users2,
+    title: "Home",
+    url: "/",
+    icon: Home,
   },
   {
-    title: "Billing",
-    url: "#",
-    icon: DollarSign,
+    title: "Create Wallet",
+    url: "/account",
+    icon: Wallet,
+  },
+  {
+    title: "Video Player - Demo",
+    url: "/demo/video",
+    icon: Video,
   },
   {
     title: "Settings",
-    url: "#",
+    url: "/settings",
     icon: Settings,
   },
 ];
@@ -45,7 +50,6 @@ export default function LayoutDashboard({ children }: { children: React.ReactNod
       <Sidebar>
         <SidebarContent>
           <SidebarGroup>
-            <SidebarGroupLabel>Application</SidebarGroupLabel>
             <SidebarGroupContent>
               <SidebarMenu>
                 {items.map((item) => (

@@ -19,7 +19,10 @@ import {
   type UniversalMiddleware,
 } from "@universal-middleware/core";
 
-import { signUpValidator } from "./validators/user";
+import {
+  signInValidator,
+  signUpValidator,
+} from "./validators/user";
 
 /**
  * Add lucia database to the context
@@ -117,23 +120,13 @@ export const luciaAuthSignupHandler = (() => async (request, context, _runtime) 
       },
     });
   }
-
-  console.log("request.body", request);
-  console.log("signup starting");
   const requestData = await request.json();
-  console.log("requestData", requestData);
   const body = requestData as { email: string; password: string; walletAddress: string };
-  console.log("request.json passes");
   const email = body.email ?? "";
   const password = body.password ?? "";
   const walletAddress = body.walletAddress ?? "";
 
-  console.log("userpass", { email, password });
-  console.log("body", body);
-
   const validated = signUpValidator.safeParse({ email, password, walletAddress });
-
-  console.log("validated", validated);
 
   if (validated.error) {
     return new Response(JSON.stringify({ error: validated.error }), {
@@ -157,7 +150,7 @@ export const luciaAuthSignupHandler = (() => async (request, context, _runtime) 
   const userId = generateId(15);
 
   try {
-    await drizzleQueries.signupWithCredentials(context.db, userId, walletAddress, email, passwordHash);
+    await drizzleQueries.signupWithCredentials(context.db, userId, email, walletAddress, passwordHash);
 
     console;
     const session = await context.lucia.createSession(userId, {});
@@ -191,9 +184,7 @@ export const luciaAuthLoginHandler = (() => async (request, context, _runtime) =
   const email = body.email ?? "";
   const password = body.password ?? "";
 
-  console.log("userpass", { email, password });
-
-  const validated = signUpValidator.safeParse({ email, password });
+  const validated = signInValidator.safeParse({ email, password });
 
   if (validated.error) {
     return new Response(JSON.stringify({ error: validated.error }), {
@@ -204,7 +195,9 @@ export const luciaAuthLoginHandler = (() => async (request, context, _runtime) =
     });
   }
 
+  console.log("email", email);
   const existingUser: DatabaseUser | undefined | null = await drizzleQueries.getExistingUser(context.db, email);
+  console.log("existingUser", existingUser);
 
   if (!existingUser) {
     return new Response(JSON.stringify({ error: { invalid: "Incorrect email or password" } }), {

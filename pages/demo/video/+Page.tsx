@@ -45,6 +45,14 @@ const images = [
     photoLink:
       "https://unsplash.com/photos/a-view-of-a-city-at-night-from-the-top-of-a-hill-5Y9a43hhYwY?utm_content=creditCopyText&utm_medium=referral&utm_source=unsplash",
   },
+  {
+    title: "A foggy road with trees on both sides",
+    src: "/images/jisca-lucia-PM9OTjUk-iY-unsplash.jpg",
+    authorLink:
+      "https://unsplash.com/@wanderlandjournal?utm_content=creditCopyText&utm_medium=referral&utm_source=unsplash",
+    photoLink:
+      "https://unsplash.com/photos/a-foggy-road-with-trees-on-both-sides-PM9OTjUk-iY?utm_content=creditCopyText&utm_medium=referral&utm_source=unsplash",
+  },
 ];
 
 function startPayment(callback: () => void) {
@@ -221,8 +229,8 @@ export default function Page() {
             </div>
           </div>
         </div>
-        <div className="bg-stone-800 py-8 flex col-span-3 overflow-y-hidden hover:overflow-y-auto rounded-md">
-          <div className="flex flex-col gap-4 mb-8 h-screen rounded-md px-8">
+        <div className="bg-stone-800 py-8 flex col-span-3 overflow-y-auto max-h-screen rounded-md">
+          <div className="flex flex-col gap-4 mb-8 h-full rounded-md px-8">
             {images.map((image, index) => (
               <div className="relative group hover:cursor-pointer rounded-md " key={index}>
                 <img src={image.src} alt={image.title} className="group-hover:brightness-50 rounded-md shadow-2xl" />
