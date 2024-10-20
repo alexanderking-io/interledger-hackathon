@@ -67,6 +67,7 @@ export async function initiatePayment(senderUrl: string, serviceType: string) {
     process.env.SENDER_URL = senderUrl;
     process.env.CONTINUE_URI = outgoingPaymentGrant.continue.uri;
     process.env.CONTINUE_TOKEN = outgoingPaymentGrant.continue.access_token.value;
+    process.env.QUOTE_ID = quote.id;
 
     return outgoingPaymentGrant.interact.redirect;
 }
@@ -75,6 +76,7 @@ export async function completePayment(interact_ref: string) {
     let senderUrl = process.env.SENDER_URL!;
     let continueUri = process.env.CONTINUE_URI!;
     let accessToken = process.env.CONTINUE_TOKEN!;
+    let quoteId = process.env.QUOTE_ID!;
 
     const client = await createClient(process.env.BASE_WALLET_ADDRESS!, process.env.KEY_ID!, process.env.PRIVATE_KEY!);
 
@@ -90,7 +92,7 @@ export async function completePayment(interact_ref: string) {
     const sendingWalletAddress = await client.walletAddress.get({ url: senderUrl });
     console.log("Sending wallet address", sendingWalletAddress);
 
-    const outgoingPayment = await createOutgoingPayment(client, sendingWalletAddress.resourceServer, finalizedOutgoingPaymentGrant.access_token.value, sendingWalletAddress, process.env.INCOMING_PAYMENT_ID!);
+    const outgoingPayment = await createOutgoingPayment(client, sendingWalletAddress.resourceServer, finalizedOutgoingPaymentGrant.access_token.value, sendingWalletAddress, quoteId);
 
     console.log("Outgoing payment created", outgoingPayment);
 
@@ -125,13 +127,15 @@ export async function recurringPayment(serviceType: string) {
         accessToken: accessToken,
     });
 
+    console.log("Token rotated", JSON.stringify(newToken.access_token.access));
+
     console.log("Token rotated", newToken);
 
     process.env.ACCESS_TOKEN = newToken.access_token.value;
     process.env.MANAGE_URL = newToken.access_token.manage;
 
     try {
-        const outgoingPayment = await createOutgoingPayment(client, sendingWalletAddress.resourceServer, newToken.access_token.value, sendingWalletAddress, process.env.INCOMING_PAYMENT_ID!);
+        const outgoingPayment = await createOutgoingPayment(client, sendingWalletAddress.resourceServer, newToken.access_token.value, sendingWalletAddress, quote.id);
         console.log("Outgoing payment created", outgoingPayment);
     } catch (err) {
         console.log("Error creating outgoing payment", err);
