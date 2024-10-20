@@ -8,13 +8,13 @@ import {
   Play,
   Search,
 } from "lucide-react";
+import { usePageContext } from "vike-react/usePageContext";
 
 import { Input } from "@/components/ui/input";
 import VideoJS, {
   Player,
   VideoJSOptions,
 } from "@/components/VideoJS";
-import { usePageContext } from "vike-react/usePageContext";
 
 const images = [
   {
@@ -98,6 +98,8 @@ function sendPayment() {
 }
 
 export default function Page() {
+  const { user } = usePageContext();
+
   const playerRef = useRef<Player | null>(null);
   const intervalRef = useRef<NodeJS.Timeout | null>(null);
   let previousTime = 0;
@@ -173,7 +175,6 @@ export default function Page() {
   };
 
   useEffect(() => {
-    const { user } = usePageContext();
     // Run startPayment when the component mounts
     startPayment(user.walletAddress, () => {
       videoJsOptions.sources = [
