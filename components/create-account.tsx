@@ -1,98 +1,144 @@
-import React, { useState, useEffect } from 'react';
-import axios from 'axios';
-import { Button } from "@/components/ui/button"
-import { Form } from 'react-hook-form';
-import { FormField, FormItem, FormLabel, FormControl, FormDescription, FormMessage } from './ui/form';
-import { Input } from './ui/input';
-export function CreateAcc(){
+import {
+  useEffect,
+  useState,
+} from "react";
 
-        const [accounts, setAccounts] = useState<any[]>([]);
-        const [accountName, setAccountName] = useState('');
-        const [transferDetails, setTransferDetails] = useState({
-          sourceAccountId: '',
-          destinationAccountId: '',
-          amount: 0,
-        });
-      
-        useEffect(() => {
-          fetchAccounts();
-        }, []);
-      
-        const fetchAccounts = async () => {
-          try {
-            const response = await axios.get('http://localhost:5000/api/accounts');
-            setAccounts(response.data);
-          } catch (error) {
-            console.error('Error fetching accounts:', error);
-          }
-        };
-      
-        const createAccount = async () => {
-          try {
-            await axios.post('http://localhost:5000/api/accounts', { name: accountName });
-            setAccountName('');
-            fetchAccounts();
-          } catch (error) {
-            console.error('Error creating account:', error);
-          }
-        };
+import {
+  Account,
+  id,
+} from "tigerbeetle-node";
 
-      
-        const createTransfer = async () => {
-          try {
-            await axios.post('http://localhost:5000/api/transfers', transferDetails);
-            setTransferDetails({ sourceAccountId: '', destinationAccountId: '', amount: 0 });
-          } catch (error) {
-            console.error('Error creating transfer:', error);
-          }
-        };
-      
-        return (
-          <div>
-            <h1>Tiger Beetle API Frontend</h1>
-            
-            <h2>Create Account</h2>
-            <input
-              type="text"
-              value={accountName}
-              onChange={(e) => setAccountName(e.target.value)}
-              placeholder="Account Name"
-            />
+import { client } from "@/ts-rest/client";
 
-            <button onClick={createAccount}>Create Account</button>
-            
-            <h2>Accounts</h2>
-            <ul>
-              {accounts.map(account => (
-                <li key={account.id}>{account.name} (ID: {account.id})</li>
-              ))}
-            </ul>
-      
-            <h2>Create Transfer</h2>
-            <input
-              type="text"
-              value={transferDetails.sourceAccountId}
-              onChange={(e) => setTransferDetails({ ...transferDetails, sourceAccountId: e.target.value })}
-              placeholder="Source Account ID"
-            />
-            <input
-              type="text"
-              value={transferDetails.destinationAccountId}
-              onChange={(e) => setTransferDetails({ ...transferDetails, destinationAccountId: e.target.value })}
-              placeholder="Destination Account ID"
-            />
-            <input
-              type="number"
-              value={transferDetails.amount}
-              onChange={(e) => setTransferDetails({ ...transferDetails, amount: Number(e.target.value) })}
-              placeholder="Amount"
-            />
-            <button onClick={createTransfer}>Create Transfer</button>
+export function CreateAcc() {
+  const [accounts, setAccounts] = useState<Account[]>([]);
+  const [accountName, setAccountName] = useState("");
+  const [transferDetails, setTransferDetails] = useState({
+    sourceAccountId: "",
+    destinationAccountId: "",
+    amount: 0,
+  });
 
-          </div>
-        )
-   
-      
+  useEffect(() => {
+    fetchAccounts();
+  }, []);
 
+  const fetchAccounts = async () => {
+    try {
+      // TODO: determine which accounts to fetch
+      const response = await client.fetchAccounts({
+        query: { accountIds: [BigInt(0)] },
+      });
+      if (response.status !== 200) {
+        throw Error("Failed to fetch accounts");
+      }
+
+      setAccounts(response.body.accounts);
+    } catch (error) {
+      console.error("Error fetching accounts:", error);
+    }
+  };
+
+  const createAccount = async () => {
+    try {
+      // TODO: determine values for new account
+      const response = await client.createAccounts({
+        body: {
+          accounts: [
+            {
+              id: id(),
+              debits_pending: 0n,
+              debits_posted: 0n,
+              credits_pending: 0n,
+              credits_posted: 0n,
+              user_data_128: 0n,
+              user_data_64: 0n,
+              user_data_32: 0,
+              reserved: 0,
+              ledger: 0,
+              code: 0,
+              flags: 0,
+              timestamp: 0n,
+            },
+          ],
+        },
+      });
+      await fetchAccounts();
+    } catch (error) {
+      console.error("Error creating account:", error);
+    }
+  };
+
+  const createTransfer = async () => {
+    try {
+      client.createTransfers({
+        body: {
+          transfers: [
+            {
+              id: id(),
+              debit_account_id: BigInt(transferDetails.destinationAccountId),
+              credit_account_id: BigInt(transferDetails.sourceAccountId),
+              amount: BigInt(transferDetails.amount),
+              pending_id: BigInt(0),
+              user_data_128: BigInt(0),
+              user_data_64: BigInt(0),
+              user_data_32: 0,
+              timeout: 0,
+              timestamp: BigInt(Date.now()),
+              ledger: 0,
+              code: 0,
+              flags: 0,
+            },
+          ],
+        },
+      });
+    } catch (error) {
+      console.error("Error creating transfer:", error);
+    }
+  };
+
+  return (
+    <div>
+      <h1>Tiger Beetle API Frontend</h1>
+
+      <h2>Create Account</h2>
+      <input
+        type="text"
+        value={accountName}
+        onChange={(e) => setAccountName(e.target.value)}
+        placeholder="Account Name"
+      />
+
+      <button onClick={createAccount}>Create Account</button>
+
+      <h2>Accounts</h2>
+      <ul>
+        {accounts.map((account) => (
+          <li key={BigInt(account.id)}>Account ID: {BigInt(account.id).toString()}</li>
+        ))}
+      </ul>
+
+      <h2>Create Transfer</h2>
+      {/* TODO: these need validation */}
+      <input
+        type="text"
+        value={transferDetails.sourceAccountId}
+        onChange={(e) => setTransferDetails({ ...transferDetails, sourceAccountId: e.target.value })}
+        placeholder="Source Account ID"
+      />
+      <input
+        type="text"
+        value={transferDetails.destinationAccountId}
+        onChange={(e) => setTransferDetails({ ...transferDetails, destinationAccountId: e.target.value })}
+        placeholder="Destination Account ID"
+      />
+      <input
+        type="number"
+        value={transferDetails.amount}
+        onChange={(e) => setTransferDetails({ ...transferDetails, amount: Number(e.target.value) })}
+        placeholder="Amount"
+      />
+      <button onClick={createTransfer}>Create Transfer</button>
+    </div>
+  );
 }
-

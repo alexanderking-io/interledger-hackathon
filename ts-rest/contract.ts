@@ -1,3 +1,8 @@
+import {
+  Account,
+  Transfer,
+} from "tigerbeetle-node";
+
 import { initContract } from "@ts-rest/core";
 
 const c = initContract();
@@ -11,17 +16,10 @@ const c = initContract();
  **/
 export const contract = c.router(
   {
-    demo: {
-      method: "GET",
-      path: "/demo",
-      responses: {
-        200: c.type<{ demo: boolean }>(),
-      },
-    },
     initiatePaymentRoute: {
       method: "GET",
       path: "/initiate-payment",
-      query: c.type<{ serviceType: string }>(),
+      query: c.type<{walletAddress: string, serviceType: string }>(),
       responses: {
         200: c.type<{ status: string; res: string }>(),
       },
@@ -45,7 +43,31 @@ export const contract = c.router(
         200: c.type<{ status: string; success: Boolean }>(),
       },
       summary: "Recurring payment",
-    }
+    },
+    fetchAccounts: {
+      method: "GET",
+      path: "/accounts",
+      query: c.type<{ accountIds: BigInt[] }>(),
+      responses: {
+        200: c.type<{ accounts: Account[] }>(),
+      },
+    },
+    createAccounts: {
+      method: "POST",
+      path: "/accounts",
+      body: c.type<{ accounts: Account[] }>(),
+      responses: {
+        200: c.type<{ status: string }>(),
+      },
+    },
+    createTransfers: {
+      method: "POST",
+      path: "/transfers",
+      body: c.type<{ transfers: Transfer[] }>(),
+      responses: {
+        200: c.type<{ status: string }>(),
+      },
+    },
   },
   {
     pathPrefix: "/api",

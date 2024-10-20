@@ -14,6 +14,7 @@ import VideoJS, {
   Player,
   VideoJSOptions,
 } from "@/components/VideoJS";
+import { usePageContext } from "vike-react/usePageContext";
 
 const images = [
   {
@@ -55,9 +56,9 @@ const images = [
   },
 ];
 
-function startPayment(callback: () => void) {
+function startPayment(walletAddress: string, callback: () => void) {
   const xhr = new XMLHttpRequest();
-  xhr.open("GET", "/api/initiate-payment?serviceType=video");
+  xhr.open("GET", "/api/initiate-payment?serviceType=video&walletAddress=" + walletAddress);
   xhr.onload = function () {
     if (xhr.status === 200) {
       var data = JSON.parse(xhr.responseText);
@@ -95,6 +96,7 @@ function sendPayment() {
 }
 
 export default function Page() {
+  const { user } = usePageContext();
   const playerRef = useRef<Player | null>(null);
   const intervalRef = useRef<NodeJS.Timeout | null>(null);
   let previousTime = 0;
@@ -171,7 +173,7 @@ export default function Page() {
 
   useEffect(() => {
     // Run startPayment when the component mounts
-    startPayment(() => {
+    startPayment(user.walletAddress, () => {
       videoJsOptions.sources = [
         {
           src: "/videos/some_video.mp4",
