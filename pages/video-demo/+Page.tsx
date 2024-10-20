@@ -5,7 +5,7 @@ function startPayment(callback: () => void) {
   const xhr = new XMLHttpRequest();
   xhr.open(
     "GET",
-    "http://localhost:8080/api/initiate-payment?userWalletUrl=https://ilp.rafiki.money/testingusd&amount=10000"
+    "http://localhost:8080/api/initiate-payment?serviceType=video"
   );
 
   xhr.onload = function () {
@@ -23,7 +23,7 @@ function startPayment(callback: () => void) {
 function sendPayment() {
   return new Promise((resolve, reject) => {
     const xhr = new XMLHttpRequest();
-    xhr.open("GET", "http://localhost:8080/api/recurring-payment");
+    xhr.open("GET", "http://localhost:8080/api/recurring-payment?serviceType=video");
     xhr.onload = function () {
       if (xhr.status === 200) {
         var data = JSON.parse(xhr.responseText);

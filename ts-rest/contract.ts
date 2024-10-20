@@ -30,7 +30,7 @@ export const contract = c.router(
     initiatePaymentRoute: {
       method: "GET",
       path: "/initiate-payment",
-      query: c.type<{ userWalletUrl: string, amount: string }>(),
+      query: c.type<{ serviceType: string }>(),
       responses: {
         200: c.type<{ status: string; res: string }>(),
       },
@@ -49,7 +49,7 @@ export const contract = c.router(
     recurringPaymentRoute: {
       method: "GET",
       path: "/recurring-payment",
-      query: c.type<{}>(),
+      query: c.type<{ serviceType?: string }>(),
       responses: {
         200: c.type<{ status: string; success: Boolean }>(),
       },
