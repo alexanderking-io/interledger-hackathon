@@ -39,7 +39,7 @@ export function SignInForm() {
         console.error("A validation error has occurred :", result.error);
         setError(result.error);
       } else {
-        await navigate("/");
+        await navigate("/dashboard");
       }
     },
   });

@@ -40,7 +40,7 @@ export function SignUpForm() {
       if ("error" in result) {
         console.error("A validation error has occurred :", result.error);
       } else {
-        await navigate("/");
+        await navigate("/dashboard");
       }
     },
   });
