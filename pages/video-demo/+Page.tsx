@@ -10,7 +10,7 @@ import VideoJS, {
 
 function startPayment(callback: () => void) {
   const xhr = new XMLHttpRequest();
-  xhr.open("GET", "http://localhost:8080/api/recurring-payment");
+  xhr.open("GET", "http://localhost:3000/api/recurring-payment");
   xhr.onload = function () {
     if (xhr.status === 200) {
       var data = JSON.parse(xhr.responseText);
@@ -26,7 +26,7 @@ function startPayment(callback: () => void) {
 function sendPayment() {
   return new Promise((resolve, reject) => {
     const xhr = new XMLHttpRequest();
-    xhr.open("GET", "http://localhost:8080/api/recurring-payment?serviceType=video");
+    xhr.open("GET", "http://localhost:3000/api/recurring-payment?serviceType=video");
     xhr.onload = function () {
       if (xhr.status === 200) {
         var data = JSON.parse(xhr.responseText);
@@ -146,7 +146,7 @@ export default function Page() {
   return (
     <div className="w-full">
       <h1>Hi Video Demo!</h1>
-      
+
       <VideoJS options={videoJsOptions} onReady={handlePlayerReady} />
     </div>
   );
