@@ -141,6 +141,9 @@ dist
 .cdk.staging
 cdk.out
 
+# MacOS files
+.DS_Store
+
 # TEMP
 database/migrations
 sqlite.db
