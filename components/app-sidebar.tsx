@@ -18,7 +18,7 @@ import { DropdownMenu, DropdownMenuTrigger, DropdownMenuContent, DropdownMenuIte
 const items = [
   {
     title: "Home",
-    href: "/",
+    href: "#",
     icon: Home,
   },
   {

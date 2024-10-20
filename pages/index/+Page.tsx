@@ -6,9 +6,9 @@ import SearchInput from "@/components/search.jsx";
 export default function Page() {
   return (
     // <>
-      {/* <h1 className="flex-col font-bold text-3xl pb-4">Dashboard</h1> */}
+      // {/* <h1 className="flex-col font-bold text-3xl pb-4">Dashboard</h1> */}
 
-    //   <Charts/>
+      <Charts/>
     //   This page is:
     //   <ul>
     //     <li>Rendered to HTML.</li>
