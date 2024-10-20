@@ -30,7 +30,7 @@ const __dirname = dirname(__filename);
 const root = __dirname;
 const port = process.env.PORT ? parseInt(process.env.PORT, 10) : 3000;
 const hmrPort = process.env.HMR_PORT ? parseInt(process.env.HMR_PORT, 10) : 24678;
-const expressPort = process.env.EX_PORT ? parseInt(process.env.EX_PORT, 10) : 5000;
+const expressPort = process.env.EX_PORT ? parseInt(process.env.EX_PORT, 10) : 6000;
 
 // Create Tiger Beetle client
 const clientTiger = createClient({
