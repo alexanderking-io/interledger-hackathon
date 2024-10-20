@@ -30,7 +30,7 @@ const router = tsr.platformContext<{ db: ReturnType<typeof dbSqlite> }>().router
       },
     };
   },
-  initiatePaymentRoute: async (req: { query: { serviceType : string} }) => {
+  initiatePaymentRoute: async (req: { query: { serviceType: string } }) => {
     let userWalletUrl = "https://ilp.rafiki.money/testingusd";
     var res = await initiatePayment(userWalletUrl, req.query.serviceType);
 
@@ -70,14 +70,8 @@ const router = tsr.platformContext<{ db: ReturnType<typeof dbSqlite> }>().router
       },
     };
   },
-<<<<<<< HEAD
-  recurringPaymentRoute: async () => {
-    let res = await recurringPayment();
-=======
   recurringPaymentRoute: async (req: { query: { serviceType?: string } }) => {
-
     let res = await recurringPayment(req.query.serviceType!);
->>>>>>> main
 
     return {
       status: 200,

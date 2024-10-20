@@ -10,15 +10,7 @@ import VideoJS, {
 
 function startPayment(callback: () => void) {
   const xhr = new XMLHttpRequest();
-<<<<<<< HEAD
   xhr.open("GET", "http://localhost:8080/api/recurring-payment");
-=======
-  xhr.open(
-    "GET",
-    "http://localhost:8080/api/initiate-payment?serviceType=video"
-  );
-
->>>>>>> main
   xhr.onload = function () {
     if (xhr.status === 200) {
       var data = JSON.parse(xhr.responseText);
