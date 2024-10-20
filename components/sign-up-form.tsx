@@ -28,11 +28,13 @@ export function SignUpForm() {
       confirmPassword: "",
     },
     onSubmit: async ({ value }) => {
+      console.log("value", value);
       const response = await fetch(`/api/signup`, {
         method: "POST",
-        body: JSON.stringify({ email: value.email, password: value.password }),
+        body: JSON.stringify({ email: value.email, password: value.password, walletAddress: value.walletAddress }),
         headers: { "Content-Type": "application/json" },
       });
+      console.log("response", response);
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
       const result: Record<string, any> = await response.json();
       if ("error" in result) {

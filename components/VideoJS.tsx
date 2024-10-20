@@ -3,7 +3,6 @@ import "video.js/dist/video-js.css";
 import React from "react";
 
 import videojs from "video.js";
-import { set } from "video.js/dist/types/tech/middleware";
 
 export type Player = ReturnType<typeof videojs>;
 type PlayerReadyCallback = (player: Player) => void;

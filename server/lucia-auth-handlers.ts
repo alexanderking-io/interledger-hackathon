@@ -1,5 +1,3 @@
-import { generateState } from "arctic";
-import { serialize } from "cookie";
 import type {
   Session,
   User,
@@ -13,13 +11,11 @@ import {
 import * as drizzleQueries from "@/database/drizzle/queries/lucia-auth";
 import {
   type DatabaseUser,
-  github,
   initializeLucia,
 } from "@/lib/lucia-auth";
 // TODO: stop using universal-middleware and directly integrate server middlewares instead. (Bati generates boilerplates that use universal-middleware https://github.com/magne4000/universal-middleware to make Bati's internal logic easier. This is temporary and will be removed soon.)
 import {
   type Get,
-  type UniversalHandler,
   type UniversalMiddleware,
 } from "@universal-middleware/core";
 
@@ -108,7 +104,26 @@ export const luciaAuthCookieMiddleware = (() => (_request, context) => {
  * @link {@see https://lucia-auth.com/guides/email-and-password/basics#register-user}
  */
 export const luciaAuthSignupHandler = (() => async (request, context, _runtime) => {
-  const body = (await request.json()) as { email: string; password: string; walletAddress: string };
+  // getting "SyntaxError: Unexpected end of JSON input" error
+  // here is fix:
+  const contentType = request.headers.get("content-type") ?? "";
+  console.log("contentType", contentType);
+
+  if (!contentType.includes("application/json")) {
+    return new Response(JSON.stringify({ error: { invalid: "Invalid content type" } }), {
+      status: 422,
+      headers: {
+        "content-type": "application/json",
+      },
+    });
+  }
+
+  console.log("request.body", request);
+  console.log("signup starting");
+  const requestData = await request.json();
+  console.log("requestData", requestData);
+  const body = requestData as { email: string; password: string; walletAddress: string };
+  console.log("request.json passes");
   const email = body.email ?? "";
   const password = body.password ?? "";
   const walletAddress = body.walletAddress ?? "";
@@ -253,27 +268,3 @@ export const luciaAuthLogoutHandler = (() => async (_request, context) => {
     },
   });
 }) satisfies Get<[], UniversalMiddleware<Universal.Context & { session?: Session | null }>>;
-
-/**
- * Github OAuth authorization handler
- *
- * @link {@see https://lucia-auth.com/guides/oauth/basics#creating-authorization-url}
- */
-export const luciaGithubLoginHandler = (() => async () => {
-  const state = generateState();
-  const url = await github.createAuthorizationURL(state);
-
-  return new Response(null, {
-    status: 302,
-    headers: {
-      Location: url.toString(),
-      "set-cookie": serialize("github_oauth_state", state, {
-        path: "/",
-        secure: process.env.NODE_ENV === "production",
-        httpOnly: true,
-        maxAge: 60 * 10,
-        sameSite: "lax",
-      }),
-    },
-  });
-}) satisfies Get<[], UniversalHandler>;

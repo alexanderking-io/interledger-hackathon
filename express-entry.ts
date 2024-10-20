@@ -20,7 +20,6 @@ import {
   luciaAuthSignupHandler,
   luciaCsrfMiddleware,
   luciaDbMiddleware,
-  luciaGithubLoginHandler,
 } from "./server/lucia-auth-handlers";
 import { tsRestHandler } from "./server/ts-rest-handler";
 import { vikeHandler } from "./server/vike-handler";
@@ -53,14 +52,15 @@ async function startServer() {
   }
 
   app.use(createMiddleware(dbMiddleware)());
-  app.use(express.json());
 
-  app.use(session({
-    secret: 'keyboard cat',
-    resave: false,
-    saveUninitialized: true,
-    cookie: { secure: true }
-  }))
+  app.use(
+    session({
+      secret: "keyboard cat",
+      resave: false,
+      saveUninitialized: true,
+      cookie: { secure: true },
+    }),
+  );
   app.use(createMiddleware(luciaDbMiddleware)());
   app.use(createMiddleware(luciaCsrfMiddleware)());
   app.use(createMiddleware(luciaAuthContextMiddleware)());
@@ -69,7 +69,6 @@ async function startServer() {
   app.post("/api/signup", createHandler(luciaAuthSignupHandler)());
   app.post("/api/login", createHandler(luciaAuthLoginHandler)());
   app.post("/api/logout", createHandler(luciaAuthLogoutHandler)());
-  app.get("/api/login/github", createHandler(luciaGithubLoginHandler)());
 
   app.all("/api/*", createHandler(tsRestHandler)());
 

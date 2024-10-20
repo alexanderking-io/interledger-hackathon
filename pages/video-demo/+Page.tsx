@@ -1,13 +1,24 @@
-import React, { useEffect, useRef } from "react";
-import VideoJS, { Player, VideoJSOptions } from "@/components/VideoJS";
+import React, {
+  useEffect,
+  useRef,
+} from "react";
+
+import VideoJS, {
+  Player,
+  VideoJSOptions,
+} from "@/components/VideoJS";
 
 function startPayment(callback: () => void) {
   const xhr = new XMLHttpRequest();
+<<<<<<< HEAD
+  xhr.open("GET", "http://localhost:8080/api/recurring-payment");
+=======
   xhr.open(
     "GET",
     "http://localhost:8080/api/initiate-payment?serviceType=video"
   );
 
+>>>>>>> main
   xhr.onload = function () {
     if (xhr.status === 200) {
       var data = JSON.parse(xhr.responseText);
@@ -60,17 +71,34 @@ export default function Page() {
 
   const handlePlayerReady = (player: Player) => {
     playerRef.current = player;
+    let previousTime = 0;
+    let currentTime = 0;
+    let seekStart: number | null = null;
 
     player.on("waiting", () => {
       console.log("player is waiting");
     });
 
     player.on("timeupdate", () => {
-      console.log("Current Time", player.currentTime());
+      previousTime = currentTime;
+      currentTime = player.currentTime()!;
     });
 
     player.on("dispose", () => {
       console.log("player will dispose");
+    });
+
+    player.on("seeking", () => {
+      if (seekStart === null) {
+        seekStart = previousTime;
+      }
+    });
+
+    player.on("seeked", () => {
+      if (currentTime > seekStart!) {
+        player.currentTime(seekStart!);
+      }
+      seekStart = null;
     });
 
     if (!intervalRef.current) {
