@@ -21,19 +21,6 @@ export async function getExistingAccount(db: ReturnType<typeof dbSqlite>, provid
     .get();
 }
 
-export async function signupWithGithub(
-  db: ReturnType<typeof dbSqlite>,
-  userId: string,
-  email: string,
-  walletAddress: string,
-  githubUserId: number,
-) {
-  return db.transaction(async (tx) => {
-    await tx.insert(userTable).values({ id: userId, email: email, walletAddress: walletAddress });
-    await tx.insert(oauthAccountTable).values({ providerId: "github", providerUserId: githubUserId, userId });
-  });
-}
-
 export async function signupWithCredentials(
   db: ReturnType<typeof dbSqlite>,
   userId: string,

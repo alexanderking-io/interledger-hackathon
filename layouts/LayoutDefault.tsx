@@ -10,8 +10,6 @@ export default function LayoutDefault({ children }: { children: React.ReactNode 
       <Sidebar>
         <Logo />
         <Link href="/">Welcome</Link>
-        <Link href="/todo">Todo</Link>
-        <Link href="/star-wars">Data Fetching</Link>
         <Link href="/video-demo">Video Demo</Link>
         {""}
       </Sidebar>

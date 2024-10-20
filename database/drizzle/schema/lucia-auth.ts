@@ -9,7 +9,7 @@ import {
 export const userTable = sqliteTable("users", {
   id: text("id").notNull().primaryKey(),
   email: text("email").notNull().unique(),
-  walletAddress: text("wallet_address").notNull().unique(),
+  walletAddress: text("wallet_address").notNull(),
   password: text("password"),
 });
 

@@ -9,9 +9,12 @@ import {
 } from "@universal-middleware/core";
 
 import { dbSqlite } from "../database/drizzle/db";
-import { completePayment, initiatePayment, recurringPayment } from "./interledger/main";
-import * as todoQueries from "../database/drizzle/queries/todos";
 import { contract } from "../ts-rest/contract";
+import {
+  completePayment,
+  initiatePayment,
+  recurringPayment,
+} from "./interledger/main";
 
 /**
  * ts-rest route
@@ -27,16 +30,7 @@ const router = tsr.platformContext<{ db: ReturnType<typeof dbSqlite> }>().router
       },
     };
   },
-  createTodo: async ({ body }, _ctx) => {
-    await todoQueries.insertTodo(_ctx.db, body.text);
-    return {
-      status: 200,
-      body: {
-        status: "Ok",
-      },
-    };
-  },
-  initiatePaymentRoute: async (req: { query: { userWalletUrl : string, amount : string} }) => {
+  initiatePaymentRoute: async (req: { query: { userWalletUrl: string; amount: string } }) => {
     var res = await initiatePayment(req.query.userWalletUrl, req.query.amount);
 
     return {
@@ -48,8 +42,7 @@ const router = tsr.platformContext<{ db: ReturnType<typeof dbSqlite> }>().router
     };
   },
   completePaymentRoute: async (req: { query: { interact_ref?: string } }) => {
-    
-    if (!('interact_ref' in req.query)) {
+    if (!("interact_ref" in req.query)) {
       return {
         status: 400,
         body: {
@@ -59,7 +52,7 @@ const router = tsr.platformContext<{ db: ReturnType<typeof dbSqlite> }>().router
     }
     var res = await completePayment(req.query.interact_ref!);
 
-    if (!('failed' in res)) {
+    if (!("failed" in res)) {
       return {
         status: 400,
         body: {
@@ -77,7 +70,6 @@ const router = tsr.platformContext<{ db: ReturnType<typeof dbSqlite> }>().router
     };
   },
   recurringPaymentRoute: async () => {
-
     let res = await recurringPayment();
 
     return {
@@ -88,7 +80,6 @@ const router = tsr.platformContext<{ db: ReturnType<typeof dbSqlite> }>().router
         res: res,
       },
     };
-
   },
 });
 

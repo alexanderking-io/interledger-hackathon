@@ -1,6 +1,5 @@
 import "dotenv/config";
 
-import { GitHub } from "arctic";
 import {
   Lucia,
   type Register,
@@ -60,13 +59,6 @@ export function initializeLucia(db: ReturnType<typeof dbSqlite>) {
 }
 
 /**
- * Initialize OAuth provider
- *
- * @link {@see https://lucia-auth.com/guides/oauth/basics#initialize-oauth-provider}
- */
-export const github = new GitHub(process.env.GITHUB_CLIENT_ID as string, process.env.GITHUB_CLIENT_SECRET as string);
-
-/**
  * Define user attributes
  *
  * @link {@see https://lucia-auth.com/basics/users#define-user-attributes}
@@ -97,9 +89,4 @@ export interface DatabaseOAuthAccount {
   providerId: string;
   providerUserId: string;
   userId: string;
-}
-
-export interface GitHubUser {
-  id: number;
-  login: string; // email
 }
