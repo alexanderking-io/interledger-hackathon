@@ -24,17 +24,17 @@ import {
 const items = [
   {
     title: "Users",
-    url: "#",
+    url: "/dashboard/users",
     icon: Users2,
   },
   {
     title: "Billing",
-    url: "#",
+    url: "/dashboard/billing",
     icon: DollarSign,
   },
   {
     title: "Settings",
-    url: "#",
+    url: "/dashboard/settings",
     icon: Settings,
   },
 ];
