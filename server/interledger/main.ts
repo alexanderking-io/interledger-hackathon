@@ -3,7 +3,7 @@ import { getWalletAddress } from "./wallet";
 import { requestGrant, continueGrant } from "./grant";
 import { createIncomingPayment, createQuote, createOutgoingPayment } from "./payments";
 
-export async function initiatePayment(senderUrl: string, amount: string) {
+export async function initiatePayment(senderUrl: string, serviceType: string) {
     if (!senderUrl) {
         throw new Error("senderUrl is undefined");
     }
@@ -25,9 +25,6 @@ export async function initiatePayment(senderUrl: string, amount: string) {
         receivingWalletAddress.resourceServer,
         incomingPaymentGrant.access_token.value,
         receivingWalletAddress,
-        receivingWalletAddress.assetCode,
-        receivingWalletAddress.assetScale,
-        amount,
         new Date(Date.now() + 60000000 * 10).toISOString(),
     );
 
@@ -43,7 +40,7 @@ export async function initiatePayment(senderUrl: string, amount: string) {
         throw new Error("Quote grant does not have an access token");
     }
 
-    const quote = await createQuote(client, sendingWalletAddress.resourceServer, quoteGrant.access_token.value, sendingWalletAddress, incomingPayment.id);
+    const quote = await createQuote(client, sendingWalletAddress.resourceServer, quoteGrant.access_token.value, sendingWalletAddress, incomingPayment.id, serviceType);
 
     console.log("Quote created", quote);
 
@@ -106,7 +103,7 @@ export async function completePayment(interact_ref: string) {
     return outgoingPayment;
 }
 
-export async function recurringPayment() {
+export async function recurringPayment(serviceType: string) {
     let senderUrl = process.env.SENDER_URL!;
     let accessToken = process.env.ACCESS_TOKEN!;
     let manageUrl = process.env.MANAGE_URL!;
@@ -133,7 +130,7 @@ export async function recurringPayment() {
         throw new Error("Quote grant does not have an access token");
     }
 
-    const quote = await createQuote(client, sendingWalletAddress.resourceServer, quoteGrant.access_token.value, sendingWalletAddress, process.env.INCOMING_PAYMENT_ID!);
+    const quote = await createQuote(client, sendingWalletAddress.resourceServer, quoteGrant.access_token.value, sendingWalletAddress, process.env.INCOMING_PAYMENT_ID!, serviceType);
 
     console.log("New Quote created", quote);
 
