@@ -5,7 +5,6 @@ import {
   Home,
   Settings,
   Video,
-  Wallet,
 } from "lucide-react";
 
 import { Separator } from "@/components/ui/separator";
@@ -26,11 +25,6 @@ const items = [
     title: "Home",
     url: "/",
     icon: Home,
-  },
-  {
-    title: "Create Wallet",
-    url: "/account",
-    icon: Wallet,
   },
   {
     title: "Video Player - Demo",
