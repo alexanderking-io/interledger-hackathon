@@ -5,6 +5,7 @@ import VideoJS, {
   Player,
   VideoJSOptions,
 } from "@/components/VideoJS";
+import { AlertDialogo } from "@/components/alert-dialog";
 
 export default function Page() {
   const playerRef = React.useRef<Player | null>(null);
@@ -35,6 +36,9 @@ export default function Page() {
     });
 
     player.on("dispose", () => {
+
+  
+      
       console.log("player will dispose");
     });
   };
