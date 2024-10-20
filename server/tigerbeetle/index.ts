@@ -3,8 +3,8 @@ import { Account, Transfer } from "tigerbeetle-node";
 import { tigerBeetle } from "../utils/tigerbeetle";
 
 class TigerBeetleService {
-  async getAccounts(accountIdList: bigint[]) {
-    const accounts = await tigerBeetle.lookupAccounts(accountIdList);
+  async getAccounts(accountIdList: BigInt[]) {
+    const accounts = await tigerBeetle.lookupAccounts(accountIdList as bigint[]);
 
     return accounts;
   }
