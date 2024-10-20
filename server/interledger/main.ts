@@ -48,7 +48,7 @@ export async function initiatePayment(senderUrl: string, serviceType: string) {
         {
             type: "outgoing-payment",
             actions: ["list", "list-all", "read", "read-all", "create"],
-            limits: { debitAmount: quote.debitAmount, receiveAmount: quote.receiveAmount, interval: "R/2016-08-24T08:00:00Z/P1D"},
+            limits: { debitAmount: quote.debitAmount, receiveAmount: quote.receiveAmount},
             identifier: sendingWalletAddress.id,
         },
     ], {
@@ -131,8 +131,8 @@ export async function recurringPayment(serviceType: string) {
 
     console.log("Token rotated", newToken);
 
-    // process.env.ACCESS_TOKEN = newToken.access_token.value;
-    // process.env.MANAGE_URL = newToken.access_token.manage;
+    process.env.ACCESS_TOKEN = newToken.access_token.value;
+    process.env.MANAGE_URL = newToken.access_token.manage;
 
     try {
         const outgoingPayment = await createOutgoingPayment(client, sendingWalletAddress.resourceServer, newToken.access_token.value, sendingWalletAddress, quote.id);

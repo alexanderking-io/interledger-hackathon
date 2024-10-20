@@ -1,126 +1,50 @@
-<!--bati:start section="document"-->
+# Open-Payments 
 
-<!--bati:start section="intro"-->
-
-Generated with [Bati](https://batijs.dev) ([version 297](https://www.npmjs.com/package/create-bati/v/0.0.297)) using this command:
-
-```sh
-pnpm create bati --react --tailwindcss --shadcn-ui --authjs --ts-rest --express --drizzle --eslint --prettier
-```
-
-<!--bati:start section="TOC"-->
+Interledger-hackathon
 
 ## Contents
 
-* [React](#react)
+links
 
-  * [`/pages/+config.ts`](#pagesconfigts)
-  * [Routing](#routing)
-  * [`/pages/_error/+Page.jsx`](#pages_errorpagejsx)
-  * [`/pages/+onPageTransitionStart.ts` and `/pages/+onPageTransitionEnd.ts`](#pagesonpagetransitionstartts-and-pagesonpagetransitionendts)
-  * [SSR](#ssr)
-  * [HTML Streaming](#html-streaming)
+[presentation (1).pdf](https://github.com/user-attachments/files/17449284/presentation.1.pdf)
 
-* [shadcn/ui](#shadcnui)
+## How it works
 
-  * [Configuration](#configuration)
-  * [Add Components to Your Project](#add-components-to-your-project)
+Today, most applications charge users a fixed fee regardless of how much they use their services. This model does not accommodate for users who occasionally engage with the app, making the subscription too expensive and not worth it. Our payment platform offers an alternative approach - a flexible pricing model by charging users based on their actual usage of the service. Instead of locking users into a flat monthly or yearly fee, our platform ensures they pay only for the services they actually use. This means the user can stream on multiple platforms without paying full price on any of them.
 
-* [*Drizzle*](#drizzle)
+## System Requirements
 
-<!--bati:end section="TOC"-->
+* NodeJs version >= 22.6.0
+* Npm version >= 10.8.2
+* zsh shell
 
-<!--bati:end section="intro"-->
+## How to build
 
-<!--bati:start section="features"-->
+* Clone the repository on your local machine
+* Create a ```.env``` file in the root folder and follow the example in ```example.env```
+* In the terminal within the root folder run ```sh build.sh```
 
-<!--bati:start category="UI Framework" flag="react"-->
+## How ro run
 
-## React
+* In your terminal once project is fully built run ```npm run preview```
+* Navigate to the relative url on your local machine based off your selected port eg - ```http://localhost:3000```
 
-This app is ready to start. It's powered by [Vike](https://vike.dev) and [React](https://react.dev/learn).
 
-### `/pages/+config.ts`
+## Team members
 
-Such `+` files are [the interface](https://vike.dev/config) between Vike and your code. It defines:
+Brandon Samson
+Amahla
+David King 
+Uzayr Sonday 
 
-* A default [`<Layout>` component](https://vike.dev/Layout) (that wraps your [`<Page>` components](https://vike.dev/Page)).
-* A default [`title`](https://vike.dev/title).
-* Global [`<head>` tags](https://vike.dev/head-tags).
+## Learnings
 
-### Routing
+We learned how to integrate the open API and solve the issues presented by the challenge. Integrating different languages using various different frameworks. How to collaborate and code together using GitHub. 
+ 
+## Achievements
 
-[Vike's built-in router](https://vike.dev/routing) lets you choose between:
+Getting the API to work. Creating an effective solution that has great market value. Working together and not sleeping 
 
-* [Filesystem Routing](https://vike.dev/filesystem-routing) (the URL of a page is determined based on where its `+Page.jsx` file is located on the filesystem)
-* [Route Strings](https://vike.dev/route-string)
-* [Route Functions](https://vike.dev/route-function)
+## What comes next?
 
-### `/pages/_error/+Page.jsx`
-
-The [error page](https://vike.dev/error-page) which is rendered when errors occur.
-
-### `/pages/+onPageTransitionStart.ts` and `/pages/+onPageTransitionEnd.ts`
-
-The [`onPageTransitionStart()` hook](https://vike.dev/onPageTransitionStart), together with [`onPageTransitionEnd()`](https://vike.dev/onPageTransitionEnd), enables you to implement page transition animations.
-
-### SSR
-
-SSR is enabled by default. You can [disable it](https://vike.dev/ssr) for all your pages or only for some pages.
-
-### HTML Streaming
-
-You can enable/disable [HTML streaming](https://vike.dev/stream) for all your pages, or only for some pages while still using it for others.
-
-<!--bati:end category="UI Framework" flag="react"-->
-
-<!--bati:start category="UI Component Libraries" flag="shadcn-ui"-->
-
-## shadcn/ui
-
-Beautifully designed components that you can copy and paste into your apps. Accessible. Customizable. Open Source.
-
-### Configuration
-
-see [shadcn/ui theming](https://ui.shadcn.com/docs/theming)
-
-Base Configuration can be found in `components.json` file.
-
-> \[!NOTE]
-> changes to the `components.json` file **will not** be reflected in existing components. Only new components will be affected.
-
-### Add Components to Your Project
-
-**Example:** add a component to your project.
-`pnpm shadcn add button`
-
-use the `<Button />` component in your project:
-`import { Button } from "@/components/ui/button";`
-
-more [shadcn/ui components](https://ui.shadcn.com/docs/components/accordion)
-
-<!--bati:end category="UI Component Libraries" flag="shadcn-ui"-->
-
-<!--bati:start category="Database" flag="drizzle"-->
-
-## *Drizzle*
-
-First, ensure that `DATABASE_URL` is configured in `.env` file, then create the database:
-
-```bash
-pnpm drizzle:generate # a script that executes drizzle-kit generate.
-pnpm drizzle:migrate # a script that executes drizzle-kit migrate.
-```
-
-> \[!NOTE]
-> The `drizzle-kit generate` command is used to generate SQL migration files based on your Drizzle schema.
->
-> The `drizzle-kit migrate` command is used to apply the generated migrations to your database.
-
-Read more on [Drizzle ORM documentation](https://orm.drizzle.team/docs/overview)
-
-<!--bati:end category="Database" flag="drizzle"-->
-
-<!--bati:end section="features"-->
-
-<!--bati:end section="document"-->
+Fixing a few bugs in the pipeline and getting it ready for production

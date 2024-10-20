@@ -11,15 +11,14 @@ export async function createIncomingPayment(client: AuthenticatedClient, resourc
 }
   
 export async function createQuote(client: AuthenticatedClient, resourceServerUrl: string, accessToken: string, walletAddress: WalletAddress, receiver: string, serviceType: string) {
-
-  let charge = serviceType === "video" ? process.env.VIDEO_WATCH_CHARGE! : process.env.PER_SECOND_RATE_LIMIT!;
+   var amount = serviceType === "video" ? process.env.VIDEO_WATCH_CHARGE! : process.env.PER_SECOND_RATE_LIMIT!;
     return await client.quote.create(
       { url: resourceServerUrl, accessToken },
       {
         walletAddress: walletAddress.id,
         receiver,
         method: "ilp",
-        debitAmount: { assetCode: walletAddress.assetCode, assetScale: walletAddress.assetScale, value: charge },
+        debitAmount: { assetCode: walletAddress.assetCode, assetScale: walletAddress.assetScale, value: amount },
       }
     );
 }

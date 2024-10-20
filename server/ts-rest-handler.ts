@@ -28,12 +28,27 @@ import { tigerBeetleService } from "./tigerbeetle";
  *
  * @link {@see https://ts-rest.com/docs/serverless/fetch-runtimes/}
  **/
+<<<<<<< HEAD
 const router = tsr
   .platformContext<{ db: ReturnType<typeof dbSqlite>; tigerBeetle: ReturnType<typeof createClient> }>()
   .router(contract, {
     initiatePaymentRoute: async (req: { query: { serviceType: string } }) => {
       let userWalletUrl = "https://ilp.interledger-test.dev/c6b67929";
       var res = await initiatePayment(userWalletUrl, req.query.serviceType);
+=======
+const router = tsr.platformContext<{ db: ReturnType<typeof dbSqlite> }>().router(contract, {
+  demo: async () => {
+    return {
+      status: 200,
+      body: {
+        demo: true,
+      },
+    };
+  },
+  initiatePaymentRoute: async (req: { query: { serviceType: string } }) => {
+    let userWalletUrl = "https://ilp.rafiki.money/brandontest";
+    var res = await initiatePayment(userWalletUrl, req.query.serviceType);
+>>>>>>> main
 
       return {
         status: 200,
