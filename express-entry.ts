@@ -129,6 +129,8 @@ const server = http.createServer(async (req: http.IncomingMessage, res: http.Ser
 });
 
 
+console.log("privkey", process.env.PRIVATE_KEY);
+
 export default (await startServer()) as unknown;
 
 async function startServer() {
