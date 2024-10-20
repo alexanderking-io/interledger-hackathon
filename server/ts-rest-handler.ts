@@ -9,8 +9,12 @@ import {
 } from "@universal-middleware/core";
 
 import { dbSqlite } from "../database/drizzle/db";
-import * as todoQueries from "../database/drizzle/queries/todos";
 import { contract } from "../ts-rest/contract";
+import {
+  completePayment,
+  initiatePayment,
+  recurringPayment,
+} from "./interledger/main";
 
 /**
  * ts-rest route
@@ -26,12 +30,55 @@ const router = tsr.platformContext<{ db: ReturnType<typeof dbSqlite> }>().router
       },
     };
   },
-  createTodo: async ({ body }, _ctx) => {
-    await todoQueries.insertTodo(_ctx.db, body.text);
+  initiatePaymentRoute: async (req: { query: { serviceType: string } }) => {
+    let userWalletUrl = "https://ilp.rafiki.money/testingusd";
+    var res = await initiatePayment(userWalletUrl, req.query.serviceType);
+
     return {
       status: 200,
       body: {
         status: "Ok",
+        res: res,
+      },
+    };
+  },
+  completePaymentRoute: async (req: { query: { interact_ref?: string } }) => {
+    if (!("interact_ref" in req.query)) {
+      return {
+        status: 400,
+        body: {
+          status: "Bad Request",
+        },
+      };
+    }
+    var res = await completePayment(req.query.interact_ref!);
+
+    if (!("failed" in res)) {
+      return {
+        status: 400,
+        body: {
+          status: "Bad Request",
+        },
+      };
+    }
+
+    return {
+      status: 200,
+      body: {
+        status: "Ok",
+        success: res.failed == false,
+      },
+    };
+  },
+  recurringPaymentRoute: async (req: { query: { serviceType?: string } }) => {
+    let res = await recurringPayment(req.query.serviceType!);
+
+    return {
+      status: 200,
+      body: {
+        status: "Ok",
+        success: res !== undefined,
+        res: res,
       },
     };
   },

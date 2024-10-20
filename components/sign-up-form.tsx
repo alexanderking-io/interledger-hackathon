@@ -23,15 +23,18 @@ export function SignUpForm() {
   const form = useForm({
     defaultValues: {
       email: "",
+      walletAddress: "",
       password: "",
       confirmPassword: "",
     },
     onSubmit: async ({ value }) => {
+      console.log("value", value);
       const response = await fetch(`/api/signup`, {
         method: "POST",
-        body: JSON.stringify({ email: value.email, password: value.password }),
+        body: JSON.stringify({ email: value.email, password: value.password, walletAddress: value.walletAddress }),
         headers: { "Content-Type": "application/json" },
       });
+      console.log("response", response);
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
       const result: Record<string, any> = await response.json();
       if ("error" in result) {
@@ -82,6 +85,26 @@ export function SignUpForm() {
                         {err}
                       </div>
                     ))}
+                  </>
+                )}
+              />
+            </div>
+            <div className="grid gap-2">
+              <form.Field
+                name="walletAddress"
+                children={(field) => (
+                  <>
+                    <Label htmlFor="email">Wallet Address</Label>
+                    <Input
+                      id="wallet-address"
+                      type="text"
+                      placeholder="$ilp.wallet.com/abc123456"
+                      required
+                      name={field.name}
+                      value={field.state.value}
+                      onBlur={field.handleBlur}
+                      onChange={(e) => field.handleChange(e.target.value)}
+                    />
                   </>
                 )}
               />

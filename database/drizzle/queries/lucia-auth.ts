@@ -21,23 +21,12 @@ export async function getExistingAccount(db: ReturnType<typeof dbSqlite>, provid
     .get();
 }
 
-export async function signupWithGithub(
-  db: ReturnType<typeof dbSqlite>,
-  userId: string,
-  email: string,
-  githubUserId: number,
-) {
-  return db.transaction(async (tx) => {
-    await tx.insert(userTable).values({ id: userId, email: email });
-    await tx.insert(oauthAccountTable).values({ providerId: "github", providerUserId: githubUserId, userId });
-  });
-}
-
 export async function signupWithCredentials(
   db: ReturnType<typeof dbSqlite>,
   userId: string,
   email: string,
+  walletAddress: string,
   passwordHash: string,
 ) {
-  return db.insert(userTable).values({ id: userId, email, password: passwordHash }).run();
+  return db.insert(userTable).values({ id: userId, email, walletAddress, password: passwordHash }).run();
 }

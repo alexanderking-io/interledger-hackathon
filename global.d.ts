@@ -4,6 +4,7 @@ import { dbSqlite } from "./database/drizzle/db";
 declare global {
   namespace Vike {
     interface PageContext {
+      user?: User;
       db: ReturnType<typeof dbSqlite>;
     }
   }

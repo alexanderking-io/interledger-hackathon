@@ -18,15 +18,34 @@ export const contract = c.router(
         200: c.type<{ demo: boolean }>(),
       },
     },
-    createTodo: {
-      method: "POST",
-      path: "/todo/create",
-      body: c.type<{ text: string }>(),
+    initiatePaymentRoute: {
+      method: "GET",
+      path: "/initiate-payment",
+      query: c.type<{ serviceType: string }>(),
       responses: {
-        200: c.type<{ status: string }>(),
+        200: c.type<{ status: string; res: string }>(),
       },
-      summary: "Create a Todo",
+      summary: "Initiate a payment",
     },
+    completePaymentRoute: {
+      method: "GET",
+      path: "/complete-payment",
+      query: c.type<{ interact_ref?: string }>(),
+      responses: {
+        200: c.type<{ status: string; success: Boolean }>(),
+        400: c.type<{ status: string }>(),
+      },
+      summary: "Complete a payment",
+    },
+    recurringPaymentRoute: {
+      method: "GET",
+      path: "/recurring-payment",
+      query: c.type<{ serviceType?: string }>(),
+      responses: {
+        200: c.type<{ status: string; success: Boolean }>(),
+      },
+      summary: "Recurring payment",
+    }
   },
   {
     pathPrefix: "/api",

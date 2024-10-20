@@ -8,6 +8,7 @@ import { SidebarProvider, SidebarTrigger } from "@/components/ui/sidebar";
 
 export default function LayoutDefault({ children }: { children: React.ReactNode }) {
   return (
+<<<<<<< HEAD
 
     <SidebarProvider>
     <AppSidebar />
@@ -18,6 +19,12 @@ export default function LayoutDefault({ children }: { children: React.ReactNode 
       {/* <Link href="/">Welcome</Link>
         <Link href="/todo">Todo</Link>
         <Link href="/star-wars">Data Fetching</Link>
+=======
+    <div className="flex max-w-5xl m-auto">
+      <Sidebar>
+        <Logo />
+        <Link href="/">Welcome</Link>
+>>>>>>> origin/main
         <Link href="/video-demo">Video Demo</Link>
         <Link href="/account">Account</Link> */}
         <div className="flex max-w-5xl m-auto">

@@ -5,6 +5,7 @@ import { fileURLToPath } from "node:url";
 import http from 'http';
 import { id, createClient } from 'tigerbeetle-node';
 import express from "express";
+import session from "express-session";
 
 import {
   createHandler,
@@ -20,8 +21,6 @@ import {
   luciaAuthSignupHandler,
   luciaCsrfMiddleware,
   luciaDbMiddleware,
-  luciaGithubCallbackHandler,
-  luciaGithubLoginHandler,
 } from "./server/lucia-auth-handlers";
 import { tsRestHandler } from "./server/ts-rest-handler";
 import { vikeHandler } from "./server/vike-handler";
@@ -153,6 +152,14 @@ async function startServer() {
 
   app.use(createMiddleware(dbMiddleware)());
 
+  app.use(
+    session({
+      secret: "keyboard cat",
+      resave: false,
+      saveUninitialized: true,
+      cookie: { secure: true },
+    }),
+  );
   app.use(createMiddleware(luciaDbMiddleware)());
   app.use(createMiddleware(luciaCsrfMiddleware)());
   app.use(createMiddleware(luciaAuthContextMiddleware)());
@@ -161,8 +168,6 @@ async function startServer() {
   app.post("/api/signup", createHandler(luciaAuthSignupHandler)());
   app.post("/api/login", createHandler(luciaAuthLoginHandler)());
   app.post("/api/logout", createHandler(luciaAuthLogoutHandler)());
-  app.get("/api/login/github", createHandler(luciaGithubLoginHandler)());
-  app.get("/api/login/github/callback", createHandler(luciaGithubCallbackHandler)());
 
   app.all("/api/*", createHandler(tsRestHandler)());
 

@@ -3,8 +3,8 @@ import { redirect } from "vike/abort";
 import type { GuardAsync } from "vike/types";
 
 const guard: GuardAsync = async (pageContext): ReturnType<GuardAsync> => {
-  if (pageContext.user) {
-    throw redirect("/");
+  if (!pageContext.user) {
+    throw redirect("/sign-in");
   }
 };
 
