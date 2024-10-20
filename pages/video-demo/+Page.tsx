@@ -7,6 +7,7 @@ import VideoJS, {
   Player,
   VideoJSOptions,
 } from "@/components/VideoJS";
+import { AlertDialogo } from "@/components/alert-dialog";
 
 function startPayment(callback: () => void) {
   const xhr = new XMLHttpRequest();
@@ -77,6 +78,9 @@ export default function Page() {
     });
 
     player.on("dispose", () => {
+
+  
+      
       console.log("player will dispose");
     });
 

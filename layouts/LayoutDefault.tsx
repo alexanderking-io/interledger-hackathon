@@ -3,18 +3,41 @@ import "./tailwind.css";
 
 import logoUrl from "../assets/logo.svg";
 import { Link } from "../components/Link.js";
+import { AppSidebar } from "@/components/app-sidebar";
+import { SidebarProvider, SidebarTrigger } from "@/components/ui/sidebar";
 
 export default function LayoutDefault({ children }: { children: React.ReactNode }) {
   return (
+
+    <SidebarProvider>
+    <AppSidebar />
+    <main>
+      <div className="flex max-w-5xl m-auto">
+        <SidebarTrigger />
+      </div>
+      {/* <Link href="/">Welcome</Link>
+        <Link href="/todo">Todo</Link>
+        <Link href="/star-wars">Data Fetching</Link>
     <div className="flex max-w-5xl m-auto">
       <Sidebar>
         <Logo />
         <Link href="/">Welcome</Link>
         <Link href="/video-demo">Video Demo</Link>
-        {""}
-      </Sidebar>
-      <Content>{children}</Content>
-    </div>
+        <Link href="/account">Account</Link> */}
+        <div className="flex max-w-5xl m-auto">
+          {children}
+        </div>
+
+    </main>
+  </SidebarProvider>
+    // <div className="flex max-w-5xl m-auto">
+    //   <Sidebar>
+    //     <Logo />
+
+    //     {""}
+    //   </Sidebar>
+    //   <Content>{children}</Content>
+    // </div>
   );
 }
 
