@@ -11,7 +11,7 @@ export default {
   Layout,
 
   // https://vike.dev/head-tags
-  title: "My Vike App",
+  title: "Table AJ - Team 41",
   description: "Demo showcasing Vike",
 
   passToClient: ["user"],

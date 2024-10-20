@@ -6,7 +6,7 @@ import type { Config } from "vike/types";
 
 export default {
   // https://vike.dev/head-tags
-  title: "My Vike App",
+  title: "Table AJ - Team 41",
   description: "Demo showcasing Vike",
 
   passToClient: ["user"],
