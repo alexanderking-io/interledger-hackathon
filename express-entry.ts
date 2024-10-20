@@ -21,7 +21,6 @@ import {
   luciaCsrfMiddleware,
   luciaDbMiddleware,
 } from "./server/lucia-auth-handlers";
-import { tigerBeetleMiddleware } from "./server/tigerbeetle-middleware";
 import { tsRestHandler } from "./server/ts-rest-handler";
 import { vikeHandler } from "./server/vike-handler";
 
@@ -68,8 +67,6 @@ async function startServer() {
   app.use(createMiddleware(luciaCsrfMiddleware)());
   app.use(createMiddleware(luciaAuthContextMiddleware)());
   app.use(createMiddleware(luciaAuthCookieMiddleware)());
-
-  app.use(createMiddleware(tigerBeetleMiddleware)());
 
   app.post("/api/signup", createHandler(luciaAuthSignupHandler)());
   app.post("/api/login", createHandler(luciaAuthLoginHandler)());

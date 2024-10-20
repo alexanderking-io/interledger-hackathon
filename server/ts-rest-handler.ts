@@ -1,10 +1,4 @@
 import {
-  Account,
-  createClient,
-  Transfer,
-} from "tigerbeetle-node";
-
-import {
   fetchRequestHandler,
   tsr,
 } from "@ts-rest/serverless/fetch";
@@ -21,14 +15,13 @@ import {
   initiatePayment,
   recurringPayment,
 } from "./interledger/main";
-import { tigerBeetleService } from "./tigerbeetle";
 
 /**
  * ts-rest route
  *
  * @link {@see https://ts-rest.com/docs/serverless/fetch-runtimes/}
  **/
-const router = tsr.platformContext<{ db: ReturnType<typeof dbSqlite>; tigerBeetle: ReturnType<typeof createClient> }>().router(contract, {
+const router = tsr.platformContext<{ db: ReturnType<typeof dbSqlite> }>().router(contract, {
   demo: async () => {
     return {
       status: 200,
@@ -41,86 +34,55 @@ const router = tsr.platformContext<{ db: ReturnType<typeof dbSqlite>; tigerBeetl
     let userWalletUrl = "https://ilp.rafiki.money/brandontest";
     var res = await initiatePayment(userWalletUrl, req.query.serviceType);
 
+    return {
+      status: 200,
+      body: {
+        status: "Ok",
+        res: res,
+      },
+    };
+  },
+  completePaymentRoute: async (req: { query: { interact_ref?: string } }) => {
+    if (!("interact_ref" in req.query)) {
       return {
-        status: 200,
+        status: 400,
         body: {
-          status: "Ok",
-          res: res,
+          status: "Bad Request",
         },
       };
-    },
-    completePaymentRoute: async (req: { query: { interact_ref?: string } }) => {
-      if (!("interact_ref" in req.query)) {
-        return {
-          status: 400,
-          body: {
-            status: "Bad Request",
-          },
-        };
-      }
-      var res = await completePayment(req.query.interact_ref!);
+    }
+    var res = await completePayment(req.query.interact_ref!);
 
-      if (!("failed" in res)) {
-        return {
-          status: 400,
-          body: {
-            status: "Bad Request",
-          },
-        };
-      }
-
+    if (!("failed" in res)) {
       return {
-        status: 200,
+        status: 400,
         body: {
-          status: "Ok",
-          success: res.failed == false,
+          status: "Bad Request",
         },
       };
-    },
-    recurringPaymentRoute: async (req: { query: { serviceType?: string } }) => {
-      let res = await recurringPayment(req.query.serviceType!);
+    }
 
-      return {
-        status: 200,
-        body: {
-          status: "Ok",
-          success: res !== undefined,
-          res: res,
-        },
-      };
-    },
-    fetchAccounts: async (req: { query: { accountIds: BigInt[] } }) => {
-      const accounts = await tigerBeetleService.getAccounts(req.query.accountIds);
+    return {
+      status: 200,
+      body: {
+        status: "Ok",
+        success: res.failed == false,
+      },
+    };
+  },
+  recurringPaymentRoute: async (req: { query: { serviceType?: string } }) => {
+    let res = await recurringPayment(req.query.serviceType!);
 
-      return {
-        status: 200,
-        body: {
-          accounts: accounts,
-        },
-      };
-    },
-    createAccounts: async (req: { body: { accounts: Account[] } }) => {
-      const accounts = await tigerBeetleService.createAccounts(req.body.accounts);
-
-      return {
-        status: 200,
-        body: {
-          status: "Ok",
-          accounts: accounts,
-        },
-      };
-    },
-    createTransfers: async (req: { body: { transfers: Transfer[] } }) => {
-      await tigerBeetleService.createTransfers(req.body.transfers);
-
-      return {
-        status: 200,
-        body: {
-          status: "Ok",
-        },
-      };
-    },
-  });
+    return {
+      status: 200,
+      body: {
+        status: "Ok",
+        success: res !== undefined,
+        res: res,
+      },
+    };
+  },
+});
 
 export const tsRestHandler: Get<[], UniversalHandler> = () => async (request, ctx, runtime) =>
   fetchRequestHandler({

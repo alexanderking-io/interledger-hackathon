@@ -3,15 +3,10 @@ import {
   useState,
 } from "react";
 
-import {
-  Account,
-  id,
-} from "tigerbeetle-node";
-
 import { client } from "@/ts-rest/client";
 
 export function CreateAcc() {
-  const [accounts, setAccounts] = useState<Account[]>([]);
+  const [accounts, setAccounts] = useState<any[]>([]);
   const [accountName, setAccountName] = useState("");
   const [transferDetails, setTransferDetails] = useState({
     sourceAccountId: "",
@@ -29,6 +24,7 @@ export function CreateAcc() {
       const response = await client.fetchAccounts({
         query: { accountIds: [BigInt(0)] },
       });
+      console.log('response', response);
       if (response.status !== 200) {
         throw Error("Failed to fetch accounts");
       }
@@ -46,7 +42,7 @@ export function CreateAcc() {
         body: {
           accounts: [
             {
-              id: id(),
+              id: 0n,
               debits_pending: 0n,
               debits_posted: 0n,
               credits_pending: 0n,
@@ -75,7 +71,7 @@ export function CreateAcc() {
         body: {
           transfers: [
             {
-              id: id(),
+              id: 0n,
               debit_account_id: BigInt(transferDetails.destinationAccountId),
               credit_account_id: BigInt(transferDetails.sourceAccountId),
               amount: BigInt(transferDetails.amount),
@@ -119,7 +115,7 @@ export function CreateAcc() {
       </ul>
 
       <h2>Create Transfer</h2>
-      {/* TODO: these need validation */}
+
       <input
         type="text"
         value={transferDetails.sourceAccountId}
