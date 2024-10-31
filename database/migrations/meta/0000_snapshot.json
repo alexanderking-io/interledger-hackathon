@@ -1,7 +1,7 @@
 {
   "version": "6",
   "dialect": "sqlite",
-  "id": "6ae4f4ee-daa8-499f-82c5-53e4b9b62663",
+  "id": "4c252c91-66eb-422f-a084-2cb0f5e79b7d",
   "prevId": "00000000-0000-0000-0000-000000000000",
   "tables": {
     "oauth_accounts": {
@@ -141,39 +141,8 @@
             "email"
           ],
           "isUnique": true
-        },
-        "users_wallet_address_unique": {
-          "name": "users_wallet_address_unique",
-          "columns": [
-            "wallet_address"
-          ],
-          "isUnique": true
         }
       },
-      "foreignKeys": {},
-      "compositePrimaryKeys": {},
-      "uniqueConstraints": {},
-      "checkConstraints": {}
-    },
-    "todos": {
-      "name": "todos",
-      "columns": {
-        "id": {
-          "name": "id",
-          "type": "integer",
-          "primaryKey": true,
-          "notNull": true,
-          "autoincrement": true
-        },
-        "text": {
-          "name": "text",
-          "type": "text(50)",
-          "primaryKey": false,
-          "notNull": true,
-          "autoincrement": false
-        }
-      },
-      "indexes": {},
       "foreignKeys": {},
       "compositePrimaryKeys": {},
       "uniqueConstraints": {},

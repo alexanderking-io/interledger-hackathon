@@ -5,15 +5,8 @@
     {
       "idx": 0,
       "version": "6",
-      "when": 1729379691672,
-      "tag": "0000_slippery_centennial",
-      "breakpoints": true
-    },
-    {
-      "idx": 1,
-      "version": "6",
-      "when": 1729385644101,
-      "tag": "0001_next_jack_murdock",
+      "when": 1729415723791,
+      "tag": "0000_wild_silver_sable",
       "breakpoints": true
     }
   ]
